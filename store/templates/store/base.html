@@ -1,0 +1,47 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>farm</title>
+  <link href="{% static 'store/css/bs_css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'store/css/style.css' %}" rel="stylesheet">
+  <link rel="icon" type="image/png" href="{%static 'store/img/logo.png'%}" />
+</head>
+
+<body>
+<nav class="navbar navbar-dark bg-dark navbar-expand-lg fixed-top">
+  <a class="navbar-brand" href="{%url 'store:index'%}">
+    <img src="{%static 'store/img/logo.png'%}" width="35" height="35" alt="logo">
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+    <div class="navbar-nav">
+      <a class="nav-item nav-link active" href="{%url 'store:index'%}">Home <span class="sr-only">(current)</span></a>
+      <a class="nav-item nav-link" href="{%url 'store:webmarket'%}">Marché en ligne</a>
+      <a class="nav-item nav-link" href="#">Points de vente</a>
+      <a class="nav-item nav-link" href="#">Actu</a>
+      <a class="nav-item nav-link disabled" href="#">Login</a>
+    </div>
+  </div>
+</nav>
+
+
+{%block content%}{%endblock%}
+
+
+<footer class="footer">
+
+</footer>
+
+
+<script src="{% static 'store/js/jquery-3.5.1.js' %}"></script>
+<script src="{% static 'store/js/jquery.slim.min.js' %}"></script>
+<script src="{% static 'store/js/bs_js/bootstrap.min.js' %}"></script>
+<script src="{% static 'store/js/bs_js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'store/js/script.js' %}"></script>
+</body>
+</html>
