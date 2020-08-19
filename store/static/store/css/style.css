@@ -141,6 +141,23 @@ footer{
   text-align: center;
 }
 
+.table td
+{
+  vertical-align: middle;
+  text-align: left;
+  font-family: "josefinLight";
+  font-size: 15px;
+}
+
+.table{
+  margin-top: 5em;
+}
+
+.table-image{
+  width: 100px;
+  height: 100px;
+  background-color: grey;
+}
 
 h5{
   font-family: "josefinLight";

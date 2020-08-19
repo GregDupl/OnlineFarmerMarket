@@ -1,0 +1,37 @@
+{%extends "store/base.html"%}
+{% load static %}
+
+{%block content%}
+<section class="my-5">
+  <div class="container">
+    <div class="row h-100">
+      <div class="offset-lg-1 col-lg-10 my-auto">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col" colspan="3">Produit</th>
+              <th scope="col">Quantité</th>
+              <th scope="col">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span>&times;</span>
+                </button>
+              </th>
+              <td><div class="table-image">
+
+              </div></td>
+              <td>Product</td>
+              <td>qté</td>
+              <td>x€</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+{%endblock%}

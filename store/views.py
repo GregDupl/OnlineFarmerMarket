@@ -22,3 +22,10 @@ def webmarket(request):
     ]
     }
     return render(request,'store/webmarket.html', context)
+
+
+def marketplaces(request):
+    return render(request,'store/marketplaces.html')
+
+def cart(request):
+    return render(request,'store/cart.html')

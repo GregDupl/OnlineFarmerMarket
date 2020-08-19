@@ -7,4 +7,6 @@ app_name = "store"
 urlpatterns = [
     path('', views.index, name="index"),
     path('marcheenligne', views.webmarket, name="webmarket"),
+    path('pointsdevente', views.marketplaces, name="marketplaces"),
+    path('panier', views.cart, name="cart")
 ]
