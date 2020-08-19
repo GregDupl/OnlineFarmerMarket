@@ -1,0 +1,15 @@
+language: python
+python: "3.6"      # current default Python on Travis CI
+# command to install dependencies
+install: pip install -r requirements.txt
+
+
+services : postgresql
+
+env:
+  jobs:
+    - DJANGO_SETTINGS_MODULE=purbeurre_project.settings.travis
+
+
+# command to run tests
+script: ./manage.py test store
