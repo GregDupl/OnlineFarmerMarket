@@ -2,3 +2,4 @@ marche_en_ligne/__pycache__
 store/__pycache__
 store/migrations/__pycache__
 marche_en_ligne/settings/__pycache__
+store/management/commands/__pycache__
