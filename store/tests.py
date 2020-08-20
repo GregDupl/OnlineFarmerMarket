@@ -1,8 +1,8 @@
 from store.models import *
-from store.management.commands.create_data import *
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.test import TestCase, Client
+
 
 # Create your tests here.
 class IndexTestCase(TestCase):
