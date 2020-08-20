@@ -8,7 +8,7 @@ services : postgresql
 
 env:
   jobs:
-    - DJANGO_SETTINGS_MODULE=purbeurre_project.settings.travis
+    - DJANGO_SETTINGS_MODULE=marche_en_ligne.settings.travis
 
 
 # command to run tests
