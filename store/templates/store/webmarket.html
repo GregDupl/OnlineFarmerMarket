@@ -9,9 +9,10 @@
       <div class="offset-md-1 col-md-2 col-sm-3 my-3">
         <h5 class="text-uppercase">Marché en Ligne</h5>
         <hr>
-        {%for elt in category%}
+        {%for elt in filter%}
         <ul class="">
-          <a href="#" id="{{elt.name}}" class="text-muted filtres">{{elt.name}}</a></ul>
+          <a href="#" id="{{elt.name}}" class="text-muted filtres">{{elt.name}}</a>
+        </ul>
         {%endfor%}
       </div>
 
@@ -19,19 +20,34 @@
       <div class="offset-sm-1 col-sm-7 my-auto">
         <div class="row">
 
-          {%for elt in product%}
-          <div class="col-md-4 text-center my-3 product" data-category="{{elt.Category}}">
-            <div class="">
-              <img src="{% static 'store/img/tomato.jpg' %}" alt="" class="img-fluid mb-2 border rounded">
-              <div class="infosproduct">
-                <button type="button" class="btn btn-info my-2"
-                data-toggle="modal" data-target="#detailProduct" data-price="{{elt.prix}}" data-product="{{elt.nom}}">
-                  {{elt.nom}}
-                </button>
-                <p class="my-2">{{elt.prix}}€/{{elt.unité}}</p>
+          {%for elt in catalog%}
+
+            {%if elt.available %}
+              <div class="col-md-4 text-center my-3 product" data-category="{{elt.fk_product.fk_category.name}}">
+                <div class="">
+                  <div class="img_product" data-toggle="modal" data-target="#detailProduct"
+                  data-price="{{elt.price}}" data-product="{{elt.fk_product.name}}"
+                  data-variety="{{elt.name}}" data-unity="{{elt.fk_unity.type}}">
+
+                    {%if elt.image != "no_url_product"%}
+                      <img src="{{elt.image}}" alt="" class="img-fluid mb-2 border rounded">
+                    {%else%}
+                      <img src="{% static 'store/img/tomato.jpg' %}" alt="" class="img-fluid mb-2 border rounded">
+                    {%endif%}
+
+                    {%if elt.stock == 0%}
+                    <p class="out_of_stock py-2 px-2"> RUPTURE DE STOCK</p>
+                    {%endif%}
+
+                  </div>
+                  <div class="infosproduct">
+                    <p>{{elt.fk_product.name|capfirst}} <br>{{elt.name|capfirst}}</p>
+                    <p class="my-2">{{elt.price}}€ / {{elt.fk_unity.type}}</p>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            {%endif%}
+
           {%endfor%}
 
       </div>
@@ -59,7 +75,7 @@
           <div class="offset-lg-1 col-lg-6 my-auto">
             <div class="row">
               <div class="col-md-12">
-                <p class="price my-2">prix</p>
+                <p class="price my-2">prix / unité</p>
                 <form class="" action="index.html" method="post">
                   <div class="form-group my-2">
                     <label for="QuantityProduct">Quantité</label>

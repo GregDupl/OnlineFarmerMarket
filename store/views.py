@@ -1,26 +1,18 @@
 from django.shortcuts import render
-
+from store.models import *
 # Create your views here.
 def index(request):
     return render(request, 'store/index.html')
 
 def webmarket(request):
+    variety = Variety.objects.all()
+    category = Category.objects.all()
+
     context = {
-    "product" : [
-        { "nom" : "aubergines", "prix" : "2", "unité" : "kg", "Category" : "Légumes"},
-        { "nom" : "tomates", "prix" : "2", "unité" : "kg", "Category" : "Légumes"},
-        { "nom" : "carottes", "prix" : "1", "unité" : "bottes", "Category" : "Légumes"},
-        { "nom" : "comté", "prix" : "10", "unité" : "kg", "Category" : "Fromages"},
-        { "nom" : "pommes", "prix" : "2", "unité" : "kg", "Category" : "Fruits"}
-    ],
-    "category" : [
-    {"name" : "Légumes"},
-    {"name" : "Fruits"},
-    {"name" : "Miel"},
-    {"name" : "Fromages"},
-    {"name" : "Oeufs"},
-    ]
+    "catalog" : variety,
+    "filter" : category
     }
+
     return render(request,'store/webmarket.html', context)
 
 

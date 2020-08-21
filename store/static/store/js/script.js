@@ -17,8 +17,8 @@ $(".filtres").on('click', function (event){
 
 $('#detailProduct').on('show.bs.modal', function (event) {
   var button = $(event.relatedTarget) // Button that triggered the modal
-  var name = button.data('product') // Extract info from data-* attributes
-  var prix = button.data('price') + "€"
+  var name = button.data('product') + " - " + button.data('variety') // Extract info from data-* attributes
+  var prix = button.data('price') + "€ / " + button.data('unity')
   // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
   // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
   var modal = $(this)
