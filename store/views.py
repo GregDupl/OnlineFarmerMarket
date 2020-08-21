@@ -17,7 +17,17 @@ def webmarket(request):
 
 
 def marketplaces(request):
-    return render(request,'store/marketplaces.html')
+    places = DirectWithdrawal.objects.all()
+    locker = CollectLocation.objects.filter(fk_command_type__type = "locker")
+    restaurant = TimeSlot.objects.filter(fk_command_type__type = "delivery")
+
+    context = {
+    "places" : places,
+    "locker" : locker,
+    "restaurant": restaurant
+    }
+
+    return render(request,'store/marketplaces.html', context)
 
 def cart(request):
     return render(request,'store/cart.html')

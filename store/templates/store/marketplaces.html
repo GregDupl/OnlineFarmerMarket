@@ -2,20 +2,73 @@
 {% load static %}
 
 {%block content%}
-<section class="my-5">
+<section class="mt-5">
   <div class="container">
     <div class="row h-100">
-      <div class="col-lg-2 text-center my-auto">
-        <img src="{% static 'store/img/aubergine.png' %}" alt="" class="img-fluid img-thumbnail dessin" id="aubergine">
-      </div>
-      <div class="offset-lg-1 col-lg-6 my-auto">
+      <div class="offset-sm-1 col-sm-8 my-auto">
         <div class="presentation">
           <h4>NOS POINTS DE VENTE</h4>
           <hr>
-          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. </p>
+          {% for elt in places%}
+            <li class="mb-4 ml-4">
+            {{elt.fk_collect_location.name|capfirst}}
+            <br>
+            {{elt.fk_collect_location.fk_adress.numero}}, {{elt.fk_collect_location.fk_adress.rue}},
+            {%if elt.fk_collect_location.fk_adress.complement%}{{elt.fk_collect_location.fk_adress.complement}},{%endif%}
+            {{elt.fk_collect_location.fk_adress.code_postal}}, {{elt.fk_collect_location.fk_adress.ville}}
+            <br>
+            le {{elt.fk_time_slot.fk_day.name}} de {{elt.fk_time_slot.start_time|date:"H:i"}} à {{elt.fk_time_slot.end_time|date:"H:i"}}
+          </li>
+          {%endfor%}
         </div>
       </div>
-      <div class="offset-lg-1 col-lg-2 text-center my-auto">
+      <div class="offset-sm-1 col-sm-2 d-none d-sm-block text-center my-auto">
+        <img src="{% static 'store/img/radis.png' %}" alt="" class="img-fluid img-thumbnail dessin" id="radis">
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="">
+  <div class="container">
+    <div class="row h-100">
+      <div class="col-sm-2 d-none d-sm-block text-center my-auto">
+        <img src="{% static 'store/img/aubergine.png' %}" alt="" class="img-fluid img-thumbnail dessin" id="aubergine">
+      </div>
+      <div class="offset-sm-1 col-sm-9 my-auto">
+        <div class="presentation">
+          <h4>NOS RELAIS CLICK&COLLECT</h4>
+          <hr>
+          {% for elt in locker%}
+            <li class="mb-4 ml-4">
+              {{elt.name}}
+              <br>
+              {{elt.fk_adress.numero}}, {{elt.fk_adress.rue}},
+              {%if elt.fk_adress.complement%}{{elt.fk_adress.complement}},{%endif%}
+              {{elt.fk_adress.code_postal}}, {{elt.fk_adress.ville}}
+            </li>
+          {%endfor%}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="">
+  <div class="container">
+    <div class="row h-100">
+      <div class="offset-lg-1 col-sm-8 my-auto">
+        <div class="presentation">
+          <h4>LIVRAISONS POUR LES RESTAURATEURS</h4>
+          <hr>
+          {% for elt in restaurant%}
+          <li class="mb-4 ml-4">
+            Le {{elt.fk_day.name}} de {{elt.start_time|date:"H:i"}} à {{elt.end_time|date:"H:i"}}
+          </li>
+          {%endfor%}
+        </div>
+      </div>
+      <div class="offset-sm-1 col-sm-2 text-center my-auto">
         <img src="{% static 'store/img/radis.png' %}" alt="" class="img-fluid img-thumbnail dessin" id="radis">
       </div>
     </div>
