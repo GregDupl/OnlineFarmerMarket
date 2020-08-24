@@ -31,3 +31,9 @@ def marketplaces(request):
 
 def cart(request):
     return render(request,'store/cart.html')
+
+def login(request):
+    data = request.POST
+    print(data)
+
+    return render(request, 'store/index.html')

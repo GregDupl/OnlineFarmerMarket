@@ -12,6 +12,7 @@ class Adress(models.Model):
 
 class CommandType(models.Model):
     type = models.CharField(max_length=50)
+    available = models.BooleanField(default=True)
 
 
 class CommandStatus(models.Model):
@@ -20,6 +21,7 @@ class CommandStatus(models.Model):
 
 class ClientType(models.Model):
     type_client = models.CharField(max_length=50)
+    available = models.BooleanField(default=True)
 
 
 class Category(models.Model):
@@ -98,11 +100,11 @@ class DirectWithdrawal(models.Model):
         ]
 
 
-class Client(User):
+class Client(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     phone = models.CharField(max_length=256, blank=True, null=True)
     fk_client_type = models.ForeignKey(ClientType, on_delete=models.CASCADE)
     fk_adress = models.ForeignKey(Adress, on_delete=models.CASCADE)
-    name_restaurant = models.CharField(max_length=250, blank=True, null=True)
     variety = models.ManyToManyField(Variety, through='Cart')
 
 

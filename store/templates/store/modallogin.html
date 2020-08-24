@@ -1,0 +1,95 @@
+<!-- Modal for login -->
+  <div class="modal fade" id="ModalLogin" tabindex="-1" role="dialog" aria-labelledby="ModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-uppercase" id="ModalTitle">Connexion</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="modalbodylogin">
+        <form action="{%url 'store:login'%}" method="post" class="py-4" id="loginform">
+          {% csrf_token %}
+
+          <div class="form-group row px-4">
+            <label for="email" class="col-sm-3 col-form-label">email * </label>
+            <div class="col-sm-9">
+              <input type="email" class="form-control" name="mail" placeholder="exemple@mail.com" required>
+            </div>
+          </div>
+
+          <div class="py-4 px-4" id="actionchoice">
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="formchoice" id="have_account" value="connect">
+              <label class="form-check-label" for="connect">J'ai déjà un compte</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="formchoice" id="no_account" value="create">
+              <label class="form-check-label" for="create">Je souhaite créer un compte</label>
+            </div>
+          </div>
+
+          <div class="py-4 px-4" id="create_account">
+
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="clienttype" id="partic" value="particulier" checked>
+              <label class="form-check-label" for="particulier">Particulier</label>
+            </div>
+
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="clienttype" id="rest" value="restaurateur">
+              <label class="form-check-label" for="restaurant">Restaurateur</label>
+            </div>
+
+            <div class="mt-3" id="type_account">
+
+              <div class="form-group row">
+                <label for="name" class="col-sm-3 col-form-label">Nom *</label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control req" name="name" placeholder="nom" required>
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="phone" class="col-sm-3 col-form-label">Téléphone </label>
+                <div class="col-sm-9">
+                  <input type="tel" class="form-control" name="phone" placeholder="0606060606" minlength=10>
+                </div>
+              </div>
+
+            <div class="form-group row">
+              <label for="adresse" class="col-sm-3 col-form-label">Adresse * </label>
+              <div class="col-sm-9">
+                <input type="number" class="form-control my-2 req" name="number" placeholder="10" required>
+                <input type="text" class="form-control my-2 req" name="rue" placeholder="rue des acacias" required>
+                <input type="number" class="form-control my-2 req" name="code_postal" placeholder="code postal" minlength=5 required>
+                <input type="text" class="form-control my-2 req" name="ville" placeholder="ville" required>
+              </div>
+            </div>
+
+          </div>
+
+          </div>
+          <div class="form-group row mt-4 px-4">
+            <label for="password" class="col-sm-3 col-form-label">Mot de passe *</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control" name="password" placeholder="entrer votre mot de passe" required>
+            </div>
+          </div>
+
+          <div class="form-group row mx-0 py-4 px-2" style="display:none" id="confirmpass">
+            <label for="confirmpassword" class="col-sm-3 col-form-label">Confirmer *</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control req" name="confirmpassword" placeholder="confirmer votre mot de passe" required>
+              <div class="" id="alertmdp"></div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary mx-4" id="loginbutton">Se connecter !</button>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
