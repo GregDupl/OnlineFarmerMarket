@@ -16,7 +16,6 @@ DATA = {
 "time" : [
     ["mercredi", datetime.time(17,45,00), datetime.time(19,00,00),1,60],
     ["samedi", datetime.time(8,00,00), datetime.time(12,30,00),1,50],
-    ["lundi", datetime.time(8,00,00), datetime.time(11,00,00),3,20],
     ["jeudi", datetime.time(8,30,00), datetime.time(11,30,00),3,15]
 ],
 "emplacement_retrait" : [

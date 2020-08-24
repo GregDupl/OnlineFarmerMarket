@@ -12,6 +12,7 @@ class Adress(models.Model):
 
 class CommandType(models.Model):
     type = models.CharField(max_length=50)
+    available = models.BooleanField(default=True)
 
 
 class CommandStatus(models.Model):
@@ -20,6 +21,7 @@ class CommandStatus(models.Model):
 
 class ClientType(models.Model):
     type_client = models.CharField(max_length=50)
+    available = models.BooleanField(default=True)
 
 
 class Category(models.Model):
