@@ -100,11 +100,11 @@ class DirectWithdrawal(models.Model):
         ]
 
 
-class Client(User):
+class Client(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     phone = models.CharField(max_length=256, blank=True, null=True)
     fk_client_type = models.ForeignKey(ClientType, on_delete=models.CASCADE)
     fk_adress = models.ForeignKey(Adress, on_delete=models.CASCADE)
-    name_restaurant = models.CharField(max_length=250, blank=True, null=True)
     variety = models.ManyToManyField(Variety, through='Cart')
 
 
