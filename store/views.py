@@ -35,40 +35,47 @@ def marketplaces(request):
 def cart(request):
     return render(request,'store/cart.html')
 
-def login(request):
+def login_form(request):
     email = request.POST['email']
     password = request.POST['password']
 
     if request.POST['choice'] == 'connect':
-        user = authenticate(email=email, password=password)
-        if user is not None:
-            login(request, user)
-            message = "succes to connect"
-        else:
+        try:
+            u = User.objects.get(email=email)
+            if u.check_password(password):
+                user = authenticate(username=u.username, password=password)
+                login(request, user)
+                message = "succes to connect"
+            else:
+                message = "incorect password"
+
+        except User.DoesNotExist:
             message = "incorrect id"
 
     elif request.POST['choice'] == 'create':
         name = request.POST['name']
-        u = User.objects.filter(email=email)
-        if u.exists():
+
+        try:
+            u = User.objects.get(email=email)
             message = "already exists"
-        else:
-            User.objects.create_user(name, email, password)
+        except User.DoesNotExist:
+            u = User.objects.create_user(name, email, password)
 
             number = request.POST['number']
             street = request.POST['street']
             cp = request.POST['cp']
             city =  request.POST['city']
 
-            adress_form = Adress.objects.filter(numero = number, rue=street, code_postal=cp, ville=city)
-            if not adress_form.exists():
-                Adress.objects.create(numero = number, rue=street, code_postal=cp, ville=city)
+            try:
+                adress_form = Adress.objects.get(numero = number, rue=street, code_postal=cp, ville=city)
+            except Adress.DoesNotExist:
+                adress_form = Adress.objects.create(numero = number, rue=street, code_postal=cp, ville=city)
 
             Client.objects.create(
-            user = User.objects.get(email=email),
+            user = u,
             phone = request.POST['phone'],
             fk_client_type = ClientType.objects.get(type_client=request.POST['type']),
-            fk_adress = Adress.objects.get(numero = number, rue=street, code_postal=cp, ville=city)
+            fk_adress = adress_form
             )
 
             message = "new client created"
