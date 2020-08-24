@@ -60,9 +60,9 @@ def login(request):
             cp = request.POST['cp']
             city =  request.POST['city']
 
-            adress_from = Adress.objects.filter(numero = number, rue=street, code_postal=cp, ville=city)
+            adress_form = Adress.objects.filter(numero = number, rue=street, code_postal=cp, ville=city)
             if not adress_form.exists():
-                adress_from = Adress.objects.create(numero = number, rue=street, code_postal=cp, ville=city)
+                Adress.objects.create(numero = number, rue=street, code_postal=cp, ville=city)
 
             Client.objects.create(
             user = User.objects.get(email=email),
