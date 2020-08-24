@@ -77,7 +77,7 @@ WSGI_APPLICATION = 'marche_en_ligne.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'farmData',
+        'NAME': 'onlinefarm',
         'USER': 'greg',
         'PASSWORD': '',
         'HOST': '',
