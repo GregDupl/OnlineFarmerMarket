@@ -36,14 +36,14 @@ def cart(request):
     return render(request,'store/cart.html')
 
 def login_form(request):
-    email = request.POST['email']
+    auth_email = request.POST['email'].lower()
     password = request.POST['password']
 
     if request.POST['choice'] == 'connect':
         try:
-            u = User.objects.get(email=email)
+            u = User.objects.get(username=auth_email)
             if u.check_password(password):
-                user = authenticate(username=u.username, password=password)
+                user = authenticate(username=auth_email, password=password)
                 login(request, user)
                 message = "succes to connect"
             else:
@@ -56,15 +56,15 @@ def login_form(request):
         name = request.POST['name']
 
         try:
-            u = User.objects.get(email=email)
+            u = User.objects.get(username=auth_email)
             message = "already exists"
         except User.DoesNotExist:
-            u = User.objects.create_user(name, email, password)
+            u = User.objects.create_user(username=auth_email, password=password, first_name=name)
 
             number = request.POST['number']
-            street = request.POST['street']
+            street = request.POST['street'].lower()
             cp = request.POST['cp']
-            city =  request.POST['city']
+            city =  request.POST['city'].lower()
 
             try:
                 adress_form = Adress.objects.get(numero = number, rue=street, code_postal=cp, ville=city)
