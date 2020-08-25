@@ -113,6 +113,7 @@ $("#loginform").submit(function(event){
         "phone": $("input[name='phone']").val(),
         "number": $("input[name='number']").val(),
         "street" : $("input[name='rue']").val(),
+        "cplt" : $("input[name='cplt']").val(),
         "cp" : $("input[name='code_postal']").val(),
         "city" : $("input[name='ville']").val(),
         "password" : $("input[name='password']").val()

@@ -63,13 +63,14 @@ def login_form(request):
 
             number = request.POST['number']
             street = request.POST['street'].lower()
+            cplt = request.POST['cplt'].lower()
             cp = request.POST['cp']
             city =  request.POST['city'].lower()
 
             try:
-                adress_form = Adress.objects.get(numero = number, rue=street, code_postal=cp, ville=city)
+                adress_form = Adress.objects.get(numero = number, rue=street, complement=cplt, code_postal=cp, ville=city)
             except Adress.DoesNotExist:
-                adress_form = Adress.objects.create(numero = number, rue=street, code_postal=cp, ville=city)
+                adress_form = Adress.objects.create(numero = number, rue=street, complement=cplt, code_postal=cp, ville=city)
 
             Client.objects.create(
             user = u,
