@@ -2,34 +2,47 @@
 {% load static %}
 
 {%block content%}
-<section class="my-5">
+<section class="mt-2">
   <div class="container">
     <div class="row h-100">
       <div class="offset-lg-1 col-lg-10 my-auto">
         <table class="table">
-          <thead>
+          <thead class="thead-dark">
             <tr>
               <th scope="col" colspan="3">Produit</th>
               <th scope="col">Quantité</th>
-              <th scope="col">Total</th>
+              <th scope="col" style="text-align : right">Total</th>
             </tr>
           </thead>
           <tbody>
+            {%for elt in cart%}
+              <tr>
+                <td style="width:3em">
+                  <button type="button" class="close" aria-label="Close">
+                    <span>&times;</span>
+                  </button>
+                </td>
+                <td style="width:6em"><div class="table-image"></div></td>
+                <td class="text-center">{{elt.fk_variety.name}}</td>
+                <td style="width:4em"><input class="form-control" type="number" value="{{elt.quantity}}" min="1" id="{{elt.fk_variety.id}}"></td>
+                <td style="text-align : right">{{elt.total}}</td>
+              </tr>
+            {%endfor%}
             <tr>
-              <th scope="row">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span>&times;</span>
-                </button>
-              </th>
-              <td><div class="table-image">
-
-              </div></td>
-              <td>Product</td>
-              <td>qté</td>
-              <td>x€</td>
+              <td colspan="5" style="text-align : right">{{total}}</td>
             </tr>
           </tbody>
         </table>
+        <div class="row my-5">
+          <div class="col-6 text-center">
+            <a href="{%url 'store:webmarket'%}">
+              <button class="btn btn-outline-info" type="button" name="button">Continuez mon marché</button>
+            </a>
+          </div>
+          <div class="col-6 text-center">
+            <button class="btn btn-info" type="button" name="button">Passer commande</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
