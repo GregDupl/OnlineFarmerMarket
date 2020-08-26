@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from store.models import *
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
@@ -85,3 +85,33 @@ def login_form(request):
     context = {"message": message}
 
     return JsonResponse(context)
+
+def profil(request):
+    if request.method == 'GET':
+        client = Client.objects.get(user=request.user)
+        order = Order.objects.filter(fk_client=client)
+
+        context = {
+        "email" :request.user.get_username(),
+        "client" : client,
+        "order" : order,
+        }
+
+        return render(request, 'store/profil.html', context)
+
+    elif request.method == "POST":
+        #if user wants to change profil infos
+        pass
+
+def logout_account(request):
+    if request.user.is_authenticated:
+        logout(request)
+    return redirect('store:index')
+
+def delete_account(request):
+    if request.user.is_authenticated:
+        user = User.objects.get(username = request.user.get_username())
+        logout(request)
+        user.delete()
+
+    return redirect('store:index')
