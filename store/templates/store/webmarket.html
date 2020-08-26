@@ -27,7 +27,7 @@
                 <div class="">
                   <div class="img_product" data-toggle="modal" data-target="#detailProduct"
                   data-price="{{elt.price}}" data-product="{{elt.fk_product.name}}"
-                  data-variety="{{elt.name}}" data-unity="{{elt.fk_unity.type}}">
+                  data-variety="{{elt.name}}" data-unity="{{elt.fk_unity.type}}" data-id="{{elt.id}}">
 
                     {%if elt.image != "no_url_product"%}
                       <img src="{{elt.image}}" alt="" class="img-fluid mb-2 border rounded">
@@ -76,13 +76,15 @@
             <div class="row">
               <div class="col-md-12">
                 <p class="price my-2">prix / unité</p>
-                <form class="" action="index.html" method="post">
+
+                <form class="" action="{%url 'store:adding_cart'%}" method="post" id="cartform">
                   <div class="form-group my-2">
                     <label for="QuantityProduct">Quantité</label>
-                    <input class="form-control" type="number" value="1" id="quantity">
+                    <input class="form-control" type="number" value="1" id="quantity" data-id='id' min="1">
                   </div>
                   <button type="submit" class="btn btn-info my-2" name="button">ajouter au panier</button>
                 </form>
+
               </div>
 
             </div>

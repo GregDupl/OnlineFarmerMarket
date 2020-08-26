@@ -13,4 +13,5 @@ urlpatterns = [
     path('account', views.profil, name="account"),
     path('logout', views.logout_account, name="logout"),
     path('delete', views.delete_account, name="delete_account"),
+    path('cart', views.adding_in_cart, name="adding_cart"),
 ]
