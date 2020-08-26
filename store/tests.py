@@ -4,6 +4,18 @@ from django.urls import reverse
 from django.test import TestCase, Client as C
 from store.management.commands.create_data import *
 
+def fake_user():
+    u = User.objects.create_user(username='fake@mail.com', password='password', first_name='name')
+    fake_adress = Adress.objects.create(numero = 1, rue='street', complement='cplt', code_postal=95000, ville='city')
+    type = ClientType.objects.create(type_client="parctiulier")
+    Client.objects.create(
+    user = u,
+    phone = '',
+    fk_client_type = ClientType.objects.get(type_client="parctiulier"),
+    fk_adress = fake_adress
+    )
+
+
 # Create your tests here.
 class IndexTestCase(TestCase):
     def test_index(self):
@@ -29,7 +41,7 @@ class CartTestCase(TestCase):
         response = c.get(reverse("store:cart"))
         self.assertEqual(response.status_code, 200)
 
-class FarmdataTestCase(TestCase):
+class AFarmdataTestCase(TestCase):
 
     def test_database_attributes(self):
         fake_database = Database()
@@ -63,3 +75,37 @@ class FarmdataTestCase(TestCase):
         self.assertEqual(len(Category.objects.all()), nb_category)
         self.assertEqual(len(Product.objects.all()), nb_product)
         self.assertEqual(len(Variety.objects.all()), nb_variety)
+
+
+class ProfilTestCase(TestCase):
+    def setUp(self):
+        fake_user()
+
+    def test_profil(self):
+        c = C()
+        c.login(username='fake@mail.com', password='password')
+        response = c.get(reverse("store:account"))
+        self.assertEqual(response.status_code, 200)
+
+class DeconnectTestCase(TestCase):
+    def setUp(self):
+        fake_user()
+
+    def test_deconnect(self):
+        c = C()
+        c.login(username='fake@mail.com', password='password')
+        response = c.get(reverse("store:logout"))
+        self.assertEqual(response.status_code, 302)
+
+class DeleteUserTestCase(TestCase):
+    def setUp(self):
+        fake_user()
+
+    def test_delete_user(self):
+        initial_number = User.objects.count()
+        c = C()
+        c.login(username='fake@mail.com', password='password')
+        response = c.get(reverse("store:delete_account"))
+        new_number = User.objects.count()
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(initial_number-1, new_number)
