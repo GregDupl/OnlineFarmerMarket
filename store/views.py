@@ -3,6 +3,7 @@ from store.models import *
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
+from django.db import IntegrityError
 # Create your views here.
 def index(request):
     return render(request, 'store/index.html')
@@ -115,3 +116,28 @@ def delete_account(request):
         user.delete()
 
     return redirect('store:index')
+
+def adding_in_cart(request):
+
+    variety = Variety.objects.get(pk=request.POST["product"])
+
+    if int(request.POST["quantity"]) <= int(variety.stock):
+        if request.user.is_authenticated:
+            client = Client.objects.get(user=request.user)
+            try:
+                Cart.objects.create(
+                fk_client = client,
+                fk_variety = variety,
+                quantity = request.POST["quantity"]
+                )
+
+            except IntegrityError:
+                existing_record = Cart.objects.get(fk_client = client, fk_variety = variety)
+                existing_record.quantity = request.POST["quantity"]
+                existing_record.save()
+    else:
+        print("no more stock for this")
+
+    context = {"message": "ok"}
+
+    return JsonResponse(context)
