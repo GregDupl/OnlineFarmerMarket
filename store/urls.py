@@ -9,5 +9,8 @@ urlpatterns = [
     path('marcheenligne', views.webmarket, name="webmarket"),
     path('pointsdevente', views.marketplaces, name="marketplaces"),
     path('panier', views.cart, name="cart"),
-    path('account', views.login_form, name="login")
+    path('login', views.login_form, name="login"),
+    path('account', views.profil, name="account"),
+    path('logout', views.logout_account, name="logout"),
+    path('delete', views.delete_account, name="delete_account"),
 ]
