@@ -29,7 +29,7 @@ $('#detailProduct').on('show.bs.modal', function (event) {
   modal.find('#quantity').attr("max", product.data('stock'))
 
   if (product.data('cart')) {
-    modal.find('#quantity').val(product.data('cart'))
+    modal.find('#quantity').val(product.attr('data-cart'))
   }
   else{
     modal.find('#quantity').val(1)
@@ -52,20 +52,23 @@ $("#carouselExampleCaptions").on('slid.bs.carousel', function () {
 
 $('#cartform').submit(function(event){
   event.preventDefault();
+  quantity = $('#quantity').val()
+  product = $('#quantity').attr('data-id')
+  alert(quantity)
   $.ajax({
     type:"POST",
     headers:{'X-CSRFToken': $('[name=csrfmiddlewaretoken]').val()},
     url:$("#cartform").attr('action'),
     data :
     {
-      "quantity" : $('#quantity').val(),
-      "product" : $('#quantity').attr('data-id'),
+      "quantity" : quantity,
+      "product" : product,
     },
     dataType : "json"
   });
 
+  $("div[data-id="+product+"]").attr('data-cart', quantity);
 });
-
 
 //LOGIN FORM
 
