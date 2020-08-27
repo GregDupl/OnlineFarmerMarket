@@ -13,6 +13,14 @@ def webmarket(request):
     variety = Variety.objects.all()
     category = Category.objects.all()
 
+    client = Client.objects.get(user=request.user)
+    cart = Cart.objects.filter(fk_client=client)
+
+    for elt in variety :
+        for record in cart:
+            if elt == record.fk_variety:
+                elt.quantity = record.quantity
+
     context = {
     "catalog" : variety,
     "filter" : category
@@ -131,7 +139,6 @@ def delete_account(request):
     return redirect('store:index')
 
 def adding_in_cart(request):
-
     variety = Variety.objects.get(pk=request.POST["product"])
     if request.user.is_authenticated:
         client = Client.objects.get(user=request.user)
@@ -144,7 +151,7 @@ def adding_in_cart(request):
 
         except IntegrityError:
             existing_record = Cart.objects.get(fk_client = client, fk_variety = variety)
-            existing_record.quantity = F('quantity') + int(request.POST["quantity"])
+            existing_record.quantity = request.POST["quantity"]
             existing_record.save()
 
     context = {"message": "ok"}

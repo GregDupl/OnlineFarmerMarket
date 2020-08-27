@@ -25,9 +25,19 @@
             {%if elt.available %}
               <div class="col-md-4 text-center my-3 product" data-category="{{elt.fk_product.fk_category.name}}">
                 <div class="">
-                  <div class="img_product" data-toggle="modal" data-target="#detailProduct"
-                  data-price="{{elt.price}}" data-product="{{elt.fk_product.name}}"
-                  data-variety="{{elt.name}}" data-unity="{{elt.fk_unity.type}}" data-id="{{elt.id}}">
+                  <div class="img_product"
+                  data-toggle="modal"
+                  data-target="#detailProduct"
+                  data-price="{{elt.price}}"
+                  data-product="{{elt.fk_product.name}}"
+                  data-variety="{{elt.name}}"
+                  data-unity="{{elt.fk_unity.type}}"
+                  data-id="{{elt.id}}"
+                  data-stock="{{elt.stock}}"
+                  {%if elt.quantity%}
+                  data-cart = "{{elt.quantity}}"
+                  {%endif%}
+                  >
 
                     {%if elt.image != "no_url_product"%}
                       <img src="{{elt.image}}" alt="" class="img-fluid mb-2 border rounded">

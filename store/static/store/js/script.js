@@ -1,3 +1,4 @@
+//Display product depending filter
 $(".filtres").on('click', function (event){
   var elt = $(event.target).html()
   var product = $(".product")
@@ -13,17 +14,23 @@ $(".filtres").on('click', function (event){
 })
 
 
+// MODAL
 $('#detailProduct').on('show.bs.modal', function (event) {
-  var button = $(event.relatedTarget) // Button that triggered the modal
-  var name = button.data('product') + " - " + button.data('variety') // Extract info from data-* attributes
-  var prix = button.data('price') + "€ / " + button.data('unity')
-  var id_variety = button.data('id')
-  // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-  // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+  var product = $(event.relatedTarget)
   var modal = $(this)
-  modal.find('.modal-title').text(name)
-  modal.find('.price').text(prix)
-  modal.find('#quantity').attr("data-id", id_variety)
+
+  modal.find('.modal-title').text(
+    product.data('product') + " - " + product.data('variety')
+  )
+  modal.find('.price').text(
+    product.data('price') + "€ / " + product.data('unity')
+  )
+  modal.find('#quantity').attr("data-id", product.data('id'))
+  modal.find('#quantity').attr("max", product.data('stock'))
+
+  if (product.data('cart')) {
+    modal.find('#quantity').val(product.data('cart'))
+  }
 
   //var vids = $(".videorecette");
   //for (var i = 0; i < vids.length; i++) {
@@ -32,8 +39,7 @@ $('#detailProduct').on('show.bs.modal', function (event) {
 
 //  var active = $(this).find(".active video");
 //  active[0].play()
-})
-
+});
 
 $("#carouselExampleCaptions").on('slid.bs.carousel', function () {
    var vids = $(this).find(".active video");
@@ -41,9 +47,26 @@ $("#carouselExampleCaptions").on('slid.bs.carousel', function () {
    vids[0].play()
 })
 
+$('#cartform').submit(function(event){
+  event.preventDefault();
+  $.ajax({
+    type:"POST",
+    headers:{'X-CSRFToken': $('[name=csrfmiddlewaretoken]').val()},
+    url:$("#cartform").attr('action'),
+    data :
+    {
+      "quantity" : $('#quantity').val(),
+      "product" : $('#quantity').attr('data-id'),
+    },
+    dataType : "json"
+  });
+
+});
+
+
+//LOGIN FORM
 
 // events for adaptative and dynamic login form in modal
-
 $('#ModalLogin').on('show.bs.modal', function (event) {
   $('#have_account').prop('checked', true);
   $("#create_account").hide();
@@ -127,19 +150,3 @@ $("#loginform").submit(function(event){
   }
 
 });
-
-$('#cartform').submit(function(event){
-  event.preventDefault();
-  $.ajax({
-    type:"POST",
-    headers:{'X-CSRFToken': $('[name=csrfmiddlewaretoken]').val()},
-    url:$("#cartform").attr('action'),
-    data :
-    {
-      "quantity" : $('#quantity').val(),
-      "product" : $('#quantity').attr('data-id'),
-    },
-    dataType : "json"
-  });
-
-})
