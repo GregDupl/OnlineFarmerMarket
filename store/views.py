@@ -133,26 +133,19 @@ def delete_account(request):
 def adding_in_cart(request):
 
     variety = Variety.objects.get(pk=request.POST["product"])
+    if request.user.is_authenticated:
+        client = Client.objects.get(user=request.user)
+        try:
+            Cart.objects.create(
+            fk_client = client,
+            fk_variety = variety,
+            quantity = request.POST["quantity"]
+            )
 
-    if int(request.POST["quantity"]) <= variety.stock:
-        if request.user.is_authenticated:
-            client = Client.objects.get(user=request.user)
-            try:
-                Cart.objects.create(
-                fk_client = client,
-                fk_variety = variety,
-                quantity = request.POST["quantity"]
-                )
-
-            except IntegrityError:
-                existing_record = Cart.objects.get(fk_client = client, fk_variety = variety)
-                existing_record.quantity = F('quantity') + int(request.POST["quantity"])
-                existing_record.save()
-
-            variety.stock = F('stock') - int(request.POST["quantity"])
-            variety.save()
-    else:
-        print("no more stock for this")
+        except IntegrityError:
+            existing_record = Cart.objects.get(fk_client = client, fk_variety = variety)
+            existing_record.quantity = F('quantity') + int(request.POST["quantity"])
+            existing_record.save()
 
     context = {"message": "ok"}
 
