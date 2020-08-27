@@ -43,19 +43,37 @@ def marketplaces(request):
     return render(request,'store/marketplaces.html', context)
 
 def cart(request):
-    query = Cart.objects.filter(fk_client=Client.objects.get(user=request.user))
+    if request.method == 'GET':
+        query = Cart.objects.filter(fk_client=Client.objects.get(user=request.user))
 
-    total_cart = 0
-    for product in query:
-        product.total = product.quantity * product.fk_variety.price
-        total_cart += product.total
+        total_cart = 0
+        for product in query:
+            product.total = product.quantity * product.fk_variety.price
+            total_cart += product.total
 
-    context = {
-    "cart" : query,
-    "total" : total_cart
-    }
+        context = {
+        "cart" : query,
+        "total" : total_cart
+        }
 
-    return render(request,'store/cart.html',context)
+        return render(request,'store/cart.html',context)
+
+    elif request.method == "POST":
+        if request.POST['action'] == 'remove':
+            cart_record = Cart.objects.get(pk=request.POST['cart_object'])
+            cart_record.delete()
+
+        elif request.POST['action'] == 'update':
+            cart_object = Cart.objects.get(pk=request.POST['cart_object'])
+            if int(request.POST["quantity"]) <= cart_object.fk_variety.stock :
+                cart_object.quantity = request.POST['quantity']
+                cart_object.save()
+
+        context = {}
+
+        return JsonResponse(context)
+
+
 
 def login_form(request):
     auth_email = request.POST['email'].lower()
@@ -155,13 +173,5 @@ def adding_in_cart(request):
             existing_record.save()
 
     context = {"message": "ok"}
-
-    return JsonResponse(context)
-
-def remove(request):
-    cart_record = Cart.objects.get(pk=request.POST['cart_object'])
-    cart_record.delete()
-    
-    context = {}
 
     return JsonResponse(context)

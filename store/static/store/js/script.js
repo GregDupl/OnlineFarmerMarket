@@ -173,11 +173,36 @@ $('.remove').on('click', function(event) {
   $.ajax({
     type:"POST",
     headers:{'X-CSRFToken': $('[name=csrfmiddlewaretoken]').val()},
-    url:$(button).parents("table").attr('data-remove'),
-    data : {"cart_object" : button.parents("tr").attr('data-product')},
+    url:$(button).parents("table").attr('data-url'),
+    data : {
+      "cart_object" : button.parents("tr").attr('data-product'),
+      "action" : "remove"
+    },
     success : function() {
       $(button).parents("tr").remove();
       update_total_cart()
+    },
+
+    dataType : "json"
+  });
+
+  return false;
+})
+
+// Update quantity in cart
+$('table input[type="number"]').change(function(event) {
+  origin = $(event.target);
+  $.ajax({
+    type:"POST",
+    headers:{'X-CSRFToken': $('[name=csrfmiddlewaretoken]').val()},
+    url:$(origin).parents("table").attr('data-url'),
+    data : {
+      "cart_object" : origin.parents("tr").attr('data-product'),
+      "quantity" : origin.val(),
+      "action" : "update"
+    },
+    error : function(response) {
+      alert(response.error)
     },
 
     dataType : "json"
