@@ -31,6 +31,9 @@ $('#detailProduct').on('show.bs.modal', function (event) {
   if (product.data('cart')) {
     modal.find('#quantity').val(product.data('cart'))
   }
+  else{
+    modal.find('#quantity').val(1)
+  }
 
   //var vids = $(".videorecette");
   //for (var i = 0; i < vids.length; i++) {
@@ -150,3 +153,35 @@ $("#loginform").submit(function(event){
   }
 
 });
+
+
+function update_total_cart() {
+  var total_result=0;
+  var subtotal = $(".subtotal");
+  for (var i = 0; i < subtotal.length; i++) {
+    value = parseFloat($(subtotal[i]).text())
+    total_result+=value
+  };
+  $("#total_cart").text(total_result.toFixed(2))
+};
+
+//remove from Cart
+$('.remove').on('click', function(event) {
+  event.preventDefault()
+  var button = $(event.target);
+
+  $.ajax({
+    type:"POST",
+    headers:{'X-CSRFToken': $('[name=csrfmiddlewaretoken]').val()},
+    url:$(button).parents("table").attr('data-remove'),
+    data : {"cart_object" : button.parents("tr").attr('data-product')},
+    success : function() {
+      $(button).parents("tr").remove();
+      update_total_cart()
+    },
+
+    dataType : "json"
+  });
+
+  return false;
+})

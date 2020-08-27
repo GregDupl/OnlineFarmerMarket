@@ -6,7 +6,7 @@
   <div class="container">
     <div class="row h-100">
       <div class="offset-lg-1 col-lg-10 my-auto">
-        <table class="table">
+        <table class="table" data-remove="{%url 'store:remove'%}">
           <thead class="thead-dark">
             <tr>
               <th scope="col" colspan="3">Produit</th>
@@ -16,20 +16,22 @@
           </thead>
           <tbody>
             {%for elt in cart%}
-              <tr>
+              <tr data-product="{{elt.id}}" data-price="{{elt.fk_variety.price}}">
                 <td style="width:3em">
-                  <button type="button" class="close" aria-label="Close">
-                    <span>&times;</span>
+                  <button type="button" class="close remove">
+                    <span class="remove">&times;</span>
                   </button>
                 </td>
                 <td style="width:6em"><div class="table-image"></div></td>
                 <td class="text-center">{{elt.fk_variety.name}}</td>
-                <td style="width:4em"><input class="form-control" type="number" value="{{elt.quantity}}" min="1" id="{{elt.fk_variety.id}}"></td>
-                <td style="text-align : right">{{elt.total}}</td>
+                <td style="width:4em">
+                  <input class="form-control" type="number" value="{{elt.quantity}}" min="1" max="{{elt.fk_variety.stock}}">
+                </td>
+                <td style="text-align : right" class="subtotal">{{elt.total}}</td>
               </tr>
             {%endfor%}
             <tr>
-              <td colspan="5" style="text-align : right">{{total}}</td>
+              <td colspan="5" style="text-align : right" id="total_cart">{{total}}</td>
             </tr>
           </tbody>
         </table>

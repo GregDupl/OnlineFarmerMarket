@@ -157,3 +157,11 @@ def adding_in_cart(request):
     context = {"message": "ok"}
 
     return JsonResponse(context)
+
+def remove(request):
+    cart_record = Cart.objects.get(pk=request.POST['cart_object'])
+    cart_record.delete()
+    
+    context = {}
+
+    return JsonResponse(context)
