@@ -1,11 +1,24 @@
 from django.shortcuts import render, redirect
 from store.models import *
+from .classes import *
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
 from django.db import IntegrityError
 from django.db.models import F
-# Create your views here.
+
+def check_cart_session(request):
+    if 'cart' not in request.session:
+        request.session['cart']={}
+
+def add_to_cart(request, client, variety, quantity):
+    try:
+        Cart.objects.create(fk_client=client, fk_variety=variety, quantity=quantity)
+    except IntegrityError:
+        existing_record = Cart.objects.get(fk_client = client, fk_variety = variety)
+        existing_record.quantity = quantity
+        existing_record.save()
+
 def index(request):
     return render(request, 'store/index.html')
 
@@ -13,13 +26,22 @@ def webmarket(request):
     variety = Variety.objects.all()
     category = Category.objects.all()
 
-    client = Client.objects.get(user=request.user)
-    cart = Cart.objects.filter(fk_client=client)
+    if request.user.is_authenticated:
+        client = Client.objects.get(user=request.user)
+        cart = Cart.objects.filter(fk_client=client)
 
-    for elt in variety :
-        for record in cart:
-            if elt == record.fk_variety:
-                elt.quantity = record.quantity
+    else:
+        # if user is anonymous, create objects queryset with dict cart session
+        check_cart_session(request)
+        cart_session = CartSession(request.session.get('cart'))
+        cart_session.create_queryset(request)
+        cart = cart_session.return_queryset(request)
+
+    if cart is not None:
+        for elt in variety :
+            for record in cart:
+                if elt == record.fk_variety:
+                    elt.quantity = record.quantity
 
     context = {
     "catalog" : variety,
@@ -27,7 +49,6 @@ def webmarket(request):
     }
 
     return render(request,'store/webmarket.html', context)
-
 
 def marketplaces(request):
     places = DirectWithdrawal.objects.all()
@@ -44,7 +65,15 @@ def marketplaces(request):
 
 def cart(request):
     if request.method == 'GET':
-        query = Cart.objects.filter(fk_client=Client.objects.get(user=request.user))
+        if request.user.is_authenticated :
+            query = Cart.objects.filter(fk_client=Client.objects.get(user=request.user))
+
+        else:
+            # User is anonymous
+            check_cart_session(request)
+            cart_session = CartSession(request.session.get('cart'))
+            cart_session.create_queryset(request)
+            query = cart_session.return_queryset(request)
 
         total_cart = 0
         for product in query:
@@ -56,24 +85,47 @@ def cart(request):
         "total" : total_cart
         }
 
+
         return render(request,'store/cart.html',context)
 
     elif request.method == "POST":
+        id_product = request.POST['cart_object']
+
         if request.POST['action'] == 'remove':
-            cart_record = Cart.objects.get(pk=request.POST['cart_object'])
-            cart_record.delete()
+
+            if request.user.is_authenticated:
+                client = Client.objects.get(user=request.user)
+                variety_ref = Variety.objects.get(pk=id_product)
+
+                cart_record = Cart.objects.get(fk_client=client, fk_variety=variety_ref)
+                cart_record.delete()
+            else:
+                request.session['cart'].pop(id_product)
+                request.session.modified = True
+
 
         elif request.POST['action'] == 'update':
-            cart_object = Cart.objects.get(pk=request.POST['cart_object'])
-            if int(request.POST["quantity"]) <= cart_object.fk_variety.stock :
-                cart_object.quantity = request.POST['quantity']
-                cart_object.save()
+            quantity = request.POST['quantity']
+            stock = Variety.objects.get(pk=id_product).stock
+
+            if request.user.is_authenticated:
+                client = Client.objects.get(user=request.user)
+                variety_ref = Variety.objects.get(pk=id_product)
+
+                cart_record = Cart.objects.get(fk_client=client, fk_variety=variety_ref)
+
+                if int(quantity) <= stock :
+                    cart_record.quantity = quantity
+                    cart_record.save()
+
+            else:
+                if int(quantity) <= stock :
+                    request.session['cart'][id_product] = quantity
+                    request.session.modified = True
 
         context = {}
 
         return JsonResponse(context)
-
-
 
 def login_form(request):
     auth_email = request.POST['email'].lower()
@@ -86,6 +138,14 @@ def login_form(request):
                 user = authenticate(username=auth_email, password=password)
                 login(request, user)
                 message = "succes to connect"
+
+                client = Client.objects.get(user=user)
+
+                check_cart_session(request)
+                cart = CartSession(request.session.get('cart'))
+                cart.create_queryset(request)
+                cart.to_cart_database(request, client, add_to_cart)
+
             else:
                 message = "incorect password"
 
@@ -112,14 +172,23 @@ def login_form(request):
             except Adress.DoesNotExist:
                 adress_form = Adress.objects.create(numero = number, rue=street, complement=cplt, code_postal=cp, ville=city)
 
-            Client.objects.create(
+            client = Client.objects.create(
             user = u,
             phone = request.POST['phone'],
             fk_client_type = ClientType.objects.get(type_client=request.POST['type']),
             fk_adress = adress_form
             )
 
+            user = authenticate(username=auth_email, password=password)
+            login(request, user)
+
+            check_cart_session(request)
+            cart = CartSession(request.session.get('cart'))
+            cart.create_queryset(request)
+            cart.to_cart_database(request, client, add_to_cart)
+
             message = "new client created"
+
 
     print(message)
     context = {"message": message}
@@ -157,20 +226,18 @@ def delete_account(request):
     return redirect('store:index')
 
 def adding_in_cart(request):
-    variety = Variety.objects.get(pk=request.POST["product"])
+    id_product = request.POST["product"]
+    quantity = request.POST["quantity"]
+    variety = Variety.objects.get(pk=id_product)
+
     if request.user.is_authenticated:
         client = Client.objects.get(user=request.user)
-        try:
-            Cart.objects.create(
-            fk_client = client,
-            fk_variety = variety,
-            quantity = request.POST["quantity"]
-            )
-
-        except IntegrityError:
-            existing_record = Cart.objects.get(fk_client = client, fk_variety = variety)
-            existing_record.quantity = request.POST["quantity"]
-            existing_record.save()
+        add_to_cart(request, client, variety, quantity)
+    else:
+        # User is anonymous
+        check_cart_session(request)
+        request.session['cart'][id_product] = quantity
+        request.session.modified = True
 
     context = {"message": "ok"}
 

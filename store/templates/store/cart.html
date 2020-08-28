@@ -16,7 +16,7 @@
           </thead>
           <tbody>
             {%for elt in cart%}
-              <tr data-product="{{elt.id}}" data-price="{{elt.fk_variety.price}}">
+              <tr data-product="{{elt.fk_variety.id}}" data-price="{{elt.fk_variety.price}}">
                 <td style="width:3em">
                   <button type="button" class="close remove">
                     <span class="remove">&times;</span>
