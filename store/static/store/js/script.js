@@ -54,7 +54,6 @@ $('#cartform').submit(function(event){
   event.preventDefault();
   quantity = $('#quantity').val()
   product = $('#quantity').attr('data-id')
-  alert(quantity)
   $.ajax({
     type:"POST",
     headers:{'X-CSRFToken': $('[name=csrfmiddlewaretoken]').val()},
@@ -64,10 +63,15 @@ $('#cartform').submit(function(event){
       "quantity" : quantity,
       "product" : product,
     },
+    success:function(){
+      $("div[data-id="+product+"]").attr('data-cart', quantity);
+      button = $('#detailProduct').find("#add");
+      var initial_text = button.html();
+      button.html("Ajouté !");
+      setTimeout(function(){button.html(initial_text);}, 1200);
+    },
     dataType : "json"
   });
-
-  $("div[data-id="+product+"]").attr('data-cart', quantity);
 });
 
 //LOGIN FORM
