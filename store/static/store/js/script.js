@@ -204,10 +204,17 @@ $('table input[type="number"]').change(function(event) {
       "quantity" : origin.val(),
       "action" : "update"
     },
-    error : function(response) {
-      alert(response.error)
+    error : function() {
+      alert("error")
     },
+    success:function(){
+      subtotal = origin.parents("tr").find(".subtotal");
+      price = origin.parents("tr").attr("data-price");
+      result = price * origin.val();
+      subtotal.text(result.toFixed(2));
+      update_total_cart()
 
+    },
     dataType : "json"
   });
 
