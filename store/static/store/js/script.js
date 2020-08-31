@@ -1,3 +1,4 @@
+//Display product depending filter
 $(".filtres").on('click', function (event){
   var elt = $(event.target).html()
   var product = $(".product")
@@ -13,25 +14,35 @@ $(".filtres").on('click', function (event){
 })
 
 
+// MODAL
 $('#detailProduct').on('show.bs.modal', function (event) {
-  var button = $(event.relatedTarget) // Button that triggered the modal
-  var name = button.data('product') + " - " + button.data('variety') // Extract info from data-* attributes
-  var prix = button.data('price') + "€ / " + button.data('unity')
-  // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-  // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+  var product = $(event.relatedTarget)
   var modal = $(this)
-  modal.find('.modal-title').text(name)
-  modal.find('.price').text(prix)
 
-  var vids = $(".videorecette");
-  for (var i = 0; i < vids.length; i++) {
-    vids[i].load()
+  modal.find('.modal-title').text(
+    product.data('product') + " - " + product.data('variety')
+  )
+  modal.find('.price').text(
+    product.data('price') + "€ / " + product.data('unity')
+  )
+  modal.find('#quantity').attr("data-id", product.data('id'))
+  modal.find('#quantity').attr("max", product.data('stock'))
+
+  if (product.data('cart')) {
+    modal.find('#quantity').val(product.attr('data-cart'))
+  }
+  else{
+    modal.find('#quantity').val(1)
   }
 
-  var active = $(this).find(".active video");
-  active[0].play()
-})
+  //var vids = $(".videorecette");
+  //for (var i = 0; i < vids.length; i++) {
+//    vids[i].load()
+  //}
 
+//  var active = $(this).find(".active video");
+//  active[0].play()
+});
 
 $("#carouselExampleCaptions").on('slid.bs.carousel', function () {
    var vids = $(this).find(".active video");
@@ -39,9 +50,29 @@ $("#carouselExampleCaptions").on('slid.bs.carousel', function () {
    vids[0].play()
 })
 
+$('#cartform').submit(function(event){
+  event.preventDefault();
+  quantity = $('#quantity').val()
+  product = $('#quantity').attr('data-id')
+  alert(quantity)
+  $.ajax({
+    type:"POST",
+    headers:{'X-CSRFToken': $('[name=csrfmiddlewaretoken]').val()},
+    url:$("#cartform").attr('action'),
+    data :
+    {
+      "quantity" : quantity,
+      "product" : product,
+    },
+    dataType : "json"
+  });
+
+  $("div[data-id="+product+"]").attr('data-cart', quantity);
+});
+
+//LOGIN FORM
 
 // events for adaptative and dynamic login form in modal
-
 $('#ModalLogin').on('show.bs.modal', function (event) {
   $('#have_account').prop('checked', true);
   $("#create_account").hide();
@@ -125,3 +156,60 @@ $("#loginform").submit(function(event){
   }
 
 });
+
+
+function update_total_cart() {
+  var total_result=0;
+  var subtotal = $(".subtotal");
+  for (var i = 0; i < subtotal.length; i++) {
+    value = parseFloat($(subtotal[i]).text())
+    total_result+=value
+  };
+  $("#total_cart").text(total_result.toFixed(2))
+};
+
+//remove from Cart
+$('.remove').on('click', function(event) {
+  event.preventDefault()
+  var button = $(event.target);
+
+  $.ajax({
+    type:"POST",
+    headers:{'X-CSRFToken': $('[name=csrfmiddlewaretoken]').val()},
+    url:$(button).parents("table").attr('data-url'),
+    data : {
+      "cart_object" : button.parents("tr").attr('data-product'),
+      "action" : "remove"
+    },
+    success : function() {
+      $(button).parents("tr").remove();
+      update_total_cart()
+    },
+
+    dataType : "json"
+  });
+
+  return false;
+})
+
+// Update quantity in cart
+$('table input[type="number"]').change(function(event) {
+  origin = $(event.target);
+  $.ajax({
+    type:"POST",
+    headers:{'X-CSRFToken': $('[name=csrfmiddlewaretoken]').val()},
+    url:$(origin).parents("table").attr('data-url'),
+    data : {
+      "cart_object" : origin.parents("tr").attr('data-product'),
+      "quantity" : origin.val(),
+      "action" : "update"
+    },
+    error : function(response) {
+      alert(response.error)
+    },
+
+    dataType : "json"
+  });
+
+  return false;
+})
