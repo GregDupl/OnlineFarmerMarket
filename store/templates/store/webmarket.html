@@ -17,15 +17,15 @@
       </div>
 
 
-      <div class="offset-sm-1 col-sm-7 my-auto">
+      <div class="offset-sm-1 col-sm-8 my-auto">
         <div class="row">
 
           {%for elt in catalog%}
 
             {%if elt.available %}
-              <div class="col-md-4 text-center my-3 product" data-category="{{elt.fk_product.fk_category.name}}">
+              <div class="col-md-4 my-3 product" data-category="{{elt.fk_product.fk_category.name}}">
                 <div class="">
-                  <div class="img_product"
+                  <div class="row img_product"
                   data-toggle="modal"
                   data-target="#detailProduct"
                   data-price="{{elt.price}}"
@@ -38,7 +38,7 @@
                   data-cart = "{{elt.quantity}}"
                   {%endif%}
                   >
-
+                  <div class="col-12">
                     {%if elt.image != "no_url_product"%}
                       <img src="{{elt.image}}" alt="" class="img-fluid mb-2 border rounded">
                     {%else%}
@@ -48,11 +48,24 @@
                     {%if elt.stock == 0%}
                     <p class="out_of_stock py-2 px-2"> RUPTURE DE STOCK</p>
                     {%endif%}
+                  </div>
 
                   </div>
-                  <div class="infosproduct">
-                    <p>{{elt.fk_product.name|capfirst}} <br>{{elt.name|capfirst}}</p>
-                    <p class="my-2">{{elt.price}}€ / {{elt.fk_unity.type}}</p>
+                  <div class="row infosproduct">
+                    <div class="col-lg-12">
+
+                    <h5 class="mt-2 pl-2">{{elt.fk_product.name|capfirst}} <br>{{elt.name|capfirst}}</h5>
+                    <p class="mt-3 pl-2">{{elt.price}}€ / {{elt.fk_unity.type}}</p>
+                    <div class="mb-3">
+
+                    {% with id=elt.id quantity=elt.quantity stock=elt.stock %}
+                      {%include 'store/cartbutton.html'%}
+                    {%endwith%}
+                  </div>
+
+                  </div>
+
+
                   </div>
                 </div>
               </div>
@@ -66,8 +79,7 @@
 
 
 
-
-
+<!-- MODAL DETAIL PRODUCT -->
 <div class="modal fade" id="detailProduct" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
     <div class="modal-content">
@@ -85,15 +97,19 @@
           <div class="offset-lg-1 col-lg-6 my-auto">
             <div class="row">
               <div class="col-md-12">
-                <p class="price my-2">prix / unité</p>
+                <div class="row">
+                  <p class="price my-2 col-12">prix / unité</p>
 
-                <form class="" action="{%url 'store:adding_cart'%}" method="post" id="cartform">
-                  <div class="form-group my-2">
-                    <label for="QuantityProduct">Quantité</label>
-                    <input class="form-control" type="number" value="1" id="quantity" data-id='id' min="1">
+                </div>
+
+                <div class="cart_interface" data-id='id'>
+                  <div class="row modif" style="display:none" data-url="{%url 'store:cart'%}">
+                    <button class="col-3 btn btn-info my-2 changebutton minus"> - </button>
+                    <input class="col-3 quantity" type="text" inputmode="numeric" value="1" min="1">
+                    <button class="col-3 btn btn-info my-2 changebutton plus"> + </button>
                   </div>
-                  <button type="submit" class="btn btn-info my-2" id="add" name="button">ajouter au panier</button>
-                </form>
+                  <button type="submit" class="btn btn-info my-2 add" data-url="{%url 'store:adding_cart'%}" name="button">+</button>
+                </div>
 
               </div>
 
