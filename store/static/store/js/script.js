@@ -72,7 +72,7 @@ $('#ModalLogin').on('show.bs.modal', function (event) {
 })
 
 // adaptative form if connect or create account
-$("input[name='formchoice']").click(function(){
+$("#loginform input[name='formchoice']").click(function(){
   if ($('#have_account').is(':checked')) {
     $("#create_account").hide();
     $(":input.req").prop('required',false);
@@ -89,7 +89,7 @@ $("input[name='formchoice']").click(function(){
 })
 
 // adaptative create form depending client type
-$("input[name='clienttype']").click(function(){
+$("#loginform input[name='clienttype']").click(function(){
   if ($('#partic').is(':checked')) {
     $("#type_account label[for='name']").html("Nom *");
     $("#type_account input[name='phone']").prop('required',false);
@@ -119,26 +119,26 @@ $("#loginform").submit(function(event){
   event.preventDefault();
   if (($('#have_account').is(':checked'))) {
     data = {
-      "choice" : $('input[name="formchoice"]:checked').val(),
-      "email" : $("input[name='mail']").val(),
-      "password" : $("input[name='password']").val()
+      "choice" : $('#loginform input[name="formchoice"]:checked').val(),
+      "email" : $("#loginform input[name='mail']").val(),
+      "password" : $("#loginform input[name='password']").val()
     }
     login()
   }
   else if (($('#no_account').is(':checked'))) {
-    if ($("input[name='password']").val() == $("input[name='confirmpassword']").val()) {
+    if ($("#loginform input[name='password']").val() == $(" #loginform input[name='confirmpassword']").val()) {
       data = {
-        "choice" : $('input[name="formchoice"]:checked').val(),
-        "type" : $('input[name="clienttype"]:checked').val(),
-        "email" : $("input[name='mail']").val(),
-        "name" : $("input[name='name']").val(),
-        "phone": $("input[name='phone']").val(),
-        "number": $("input[name='number']").val(),
-        "street" : $("input[name='rue']").val(),
-        "cplt" : $("input[name='cplt']").val(),
-        "cp" : $("input[name='code_postal']").val(),
-        "city" : $("input[name='ville']").val(),
-        "password" : $("input[name='password']").val()
+        "choice" : $('#loginform input[name="formchoice"]:checked').val(),
+        "type" : $('#loginform input[name="clienttype"]:checked').val(),
+        "email" : $("#loginform input[name='mail']").val(),
+        "name" : $("#loginform input[name='name']").val(),
+        "phone": $("#loginform input[name='phone']").val(),
+        "number": $("#loginform input[name='number']").val(),
+        "street" : $("#loginform input[name='rue']").val(),
+        "cplt" : $("#loginform input[name='cplt']").val(),
+        "cp" : $("#loginform input[name='code_postal']").val(),
+        "city" : $("#loginform input[name='ville']").val(),
+        "password" : $("#loginform input[name='password']").val()
       }
       login()
     } else {
@@ -220,7 +220,7 @@ function ajax_update(input, id_product, value, action){
       }
       else
       {
-        product_catalog = $(".img_product[data-id="+product+"]")
+        product_catalog = $(".img_product[data-id="+id_product+"]")
         product_catalog.attr('data-cart', value)
 
         if ($("body").hasClass("modal-open"))
@@ -363,4 +363,86 @@ $(".quantity").focusout(function(e){
   product = cart_elt.attr('data-id')
   value = parseInt(input.attr('value'))
   ajax_update(input, product, value, "update")
+});
+
+
+// ****** UPDATE PROFIL ******
+function update_profil(form, data){
+  $.ajax({
+    type:"POST",
+    headers:{'X-CSRFToken': $('[name=csrfmiddlewaretoken]').val()},
+    url:$(form).attr('action'),
+    data : data,
+    dataType : "json"
+  });
+};
+
+$("#update_infos_button").click(function(event){
+  var text = $(this).text()
+  if (text == "Modifier") {
+    $("#infosprofil").hide();
+    $("#update_password_form").hide();
+    $("#update_infos_form").show();
+    $(this).text("retour")
+    $("#update_password_button").text('Changer de mot de passe')
+  }
+  else{
+    $("#update_infos_form").hide();
+    $("#update_password_form").hide();
+    $("#infosprofil").show();
+    $(this).text("Modifier")
+  }
+});
+
+$("#update_password_button").click(function(event){
+  var text = $(this).text()
+  if (text == "Changer de mot de passe") {
+    $("#infosprofil").hide();
+    $("#update_infos_form").hide();
+    $("#update_password_form").show();
+    $(this).text('retour')
+    $("#update_infos_button").text("Modifier")
+  }
+  else{
+    $("#infosprofil").show();
+    $("#update_infos_form").hide();
+    $("#update_password_form").hide();
+    $(this).text('Changer de mot de passe')
+  }
+});
+
+$("#update_infos_form").submit(function(event) {
+  event.preventDefault();
+  var form = $("#update_infos_form")
+  var newinfo = {
+    "action" : "update_infos",
+    "email" : $("#update_infos_form input[name='mail']").val(),
+    "name" : $("#update_infos_form input[name='name']").val(),
+    "phone": $("#update_infos_form input[name='phone']").val(),
+    "number": $("#update_infos_form input[name='number']").val(),
+    "street" : $("#update_infos_form input[name='rue']").val(),
+    "cplt" : $("#update_infos_form input[name='cplt']").val(),
+    "cp" : $("#update_infos_form input[name='code_postal']").val(),
+    "city" : $("#update_infos_form input[name='ville']").val(),
+    "password" : $("#update_infos_form input[name='password']").val()
+  }
+  update_profil(form, newinfo)
+});
+
+$("#update_password_form").submit(function(event){
+  event.preventDefault();
+  var newpass = $("#update_password_form input[name='newpassword']").val();
+  var confirmpass = $("#update_password_form input[name='confirmpassword']").val();
+  var form = $("#update_password_form");
+  var pass = {
+    "action" : "update_password",
+    "newpassword" : newpass,
+    "password" : $("#update_password_form input[name='actualpassword']").val()
+  };
+  if (newpass == confirmpass) {
+    update_profil(form, pass)
+  }
+  else{
+    alert("les mots de passe doivent être identique")
+  }
 });
