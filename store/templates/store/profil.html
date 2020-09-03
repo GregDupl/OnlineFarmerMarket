@@ -2,31 +2,11 @@
 {% load static %}
 
 {%block content%}
-<section class="my-5">
+<section class="my-3">
   <div class="container">
-    <div class="row">
-      <div class="col-12">
-        <a class="btn btn-primary btn-sm mt-2 float-right" id="logoutbutton" href="{%url 'store:logout'%}">Se déconnecter</a>
-      </div>
-    </div>
-    <div class="row h-100">
-      <div class="col-md-3">
-        <div class="presentation">
-          <h4>Mes infos</h4>
-          <hr>
-          <p>Nom : {{client.user.first_name|capfirst}}</p>
-          <p>email : {{email}} </p>
-          <p>adresse :
-            {{client.fk_adress.numero}},
-            {{client.fk_adress.rue}}
-            {%if client.fk_adress.complement%}
-            {{client.fk_adress.complement}}
-            {%endif%}
-            {{client.fk_adress.code_postal}}
-            {{client.fk_adress.ville|capfirst}}</p>
-        </div>
-      </div>
-      <div class="offset-md-1 col-md-8">
+    <div class="row h-100 pb-5 mb-5">
+
+      <div class="col-md-7">
         <div class="presentation">
           <h4>Mes commandes</h4>
           <hr>
@@ -43,11 +23,124 @@
           </div>
         </div>
       </div>
+
+      <div class="offset-md-1 col-md-4">
+        <div class="presentation">
+          <div class="row">
+            <div class="col-9">
+              <h4>Mes infos</h4>
+            </div>
+            <div class="col-3">
+              <button class="btn btn-link btn-sm" id="update_infos_button" type="button" name="button">Modifier</button>
+            </div>
+
+          </div>
+          <hr>
+          <!-- DISPLAY INFOS PROFIL -->
+          <div class="" id="infosprofil" style="display:block">
+            <div class="message"></div>
+            <p>Nom : {{client.user.first_name|capfirst}}</p>
+            <p>email : {{email}} </p>
+            <p>adresse :
+              {{client.fk_adress.numero}},
+              {{client.fk_adress.rue}}
+              {%if client.fk_adress.complement%}
+              {{client.fk_adress.complement}}
+              {%endif%}
+              {{client.fk_adress.code_postal}}
+              {{client.fk_adress.ville|capfirst}}</p>
+          </div>
+          <!-- FORM TO UPDATE INFOS PROFIL -->
+          <form class="" id="update_infos_form" action="{%url 'store:account'%}" method="post" style="display:none" >
+            <div class="message"></div>
+            <div class="form-group row">
+              <div class="col-sm-12">
+                <input type="email" class="form-control" name="mail" value="{{email}}" required>
+              </div>
+            </div>
+              <div class="form-group row">
+                <div class="col-sm-12">
+                  <input type="text" class="form-control req" name="name" value="{{client.user.first_name|capfirst}}" required>
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <div class="col-sm-12">
+                  {%if client.phone%}
+                  <input type="tel" class="form-control" name="phone" value="{{client.phone}}" minlength=10>
+                  {%else%}
+                  <input type="tel" class="form-control" name="phone" placeholder="0606060606" minlength=10>
+                  {%endif%}
+
+                </div>
+              </div>
+
+            <div class="form-group row">
+              <div class="col-sm-12">
+                <input type="number" class="form-control my-2 req" name="number" value="{{client.fk_adress.numero}}" required>
+                <input type="text" class="form-control my-2 req" name="rue" value="{{client.fk_adress.rue}}" required>
+                {%if client.fk_adress.complement%}
+                <input type="text" class="form-control my-2" name="cplt" value="{{client.fk_adress.complement}}">
+                {%else%}
+                <input type="text" class="form-control my-2" name="cplt" placeholder="Complément d'adresse">
+                {%endif%}
+                <input type="text" class="form-control my-2 req" name="code_postal" value="{{client.fk_adress.code_postal}}" required>
+                <input type="text" class="form-control my-2 req" name="ville" value="{{client.fk_adress.ville|capfirst}}" required>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <div class="col-9">
+                <input type="password" class="form-control" name="password" placeholder="Entrez votre mot de passe" required>
+              </div>
+              <div class="col-3 pl-0">
+                <button class="btn btn-info btn-sm btn-block py-2" type="submit" name="button">Envoyer</button>
+              </div>
+            </div>
+          </form>
+
+          <!-- FORM TO UPDATE PASSWORD -->
+          <form class="" id="update_password_form" action="" method="post" style="display:none">
+            <div class="message"></div>
+            <div class="form-group row">
+              <div class="col-sm-12">
+                <input type="password" class="form-control py-2" name="newpassword" placeholder="Choisir un nouveau mot de passe" required>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <div class="col-sm-12">
+                <input type="password" class="form-control" name="confirmpassword" placeholder="Confirmer votre nouveau mot de passe" required>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <div class="col-9">
+                <input type="password" class="form-control py-2" name="actualpassword" placeholder="Mot de passe actuel" required>
+              </div>
+              <div class="col-3 pl-0">
+                <button class="btn btn-info btn-sm btn-block py-2" type="submit" name="button">Envoyer</button>
+              </div>
+            </div>
+
+          </form>
+
+          <div class="mt-5">
+            <button class="btn btn-link btn-sm float-right" id="update_password_button" type="button" name="button">Changer de mot de passe</button>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="row">
-      <div class="col-12">
-        <hr>
-        <a class="btn btn-danger btn-sm mt-5 btn-block" id="logoutbutton" href="{%url 'store:delete_account'%}">Supprimer mon compte</a>
+
+    <div class="row mt-5 pb-1">
+      <div class="offset-md-9 col-md-3">
+        <a class="btn btn-info btn-sm btn-block" id="logoutbutton" href="{%url 'store:logout'%}">Se déconnecter</a>
+      </div>
+    </div>
+    <hr>
+    <div class="row pt-1">
+      <div class="offset-md-9 col-md-3">
+        <a class="btn btn-link btn-sm btn-block" style="color : red" id="logoutbutton" href="{%url 'store:delete_account'%}">Supprimer mon compte</a>
       </div>
     </div>
   </div>

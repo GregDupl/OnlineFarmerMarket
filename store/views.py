@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from store.models import *
 from .classes import *
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.http import JsonResponse
 from django.db import IntegrityError
 from django.db.models import F
@@ -196,8 +196,10 @@ def login_form(request):
     return JsonResponse(context)
 
 def profil(request):
+
+    client = Client.objects.get(user=request.user)
+
     if request.method == 'GET':
-        client = Client.objects.get(user=request.user)
         order = Order.objects.filter(fk_client=client)
 
         context = {
@@ -209,8 +211,42 @@ def profil(request):
         return render(request, 'store/profil.html', context)
 
     elif request.method == "POST":
-        #if user wants to change profil infos
-        pass
+        if request.user.check_password(request.POST["password"]):
+            if request.POST["action"] == "update_infos":
+                request.user.username = request.POST["email"]
+                request.user.first_name = request.POST["name"]
+
+                number = request.POST['number']
+                street = request.POST['street'].lower()
+                cplt = request.POST['cplt'].lower()
+                cp = request.POST['cp']
+                city =  request.POST['city'].lower()
+                try:
+                    adress_form = Adress.objects.get(numero = number, rue=street, complement=cplt, code_postal=cp, ville=city)
+                except Adress.DoesNotExist:
+                    adress_form = Adress.objects.create(numero = number, rue=street, complement=cplt, code_postal=cp, ville=city)
+
+                client.fk_adress = adress_form
+
+                client.phone = request.POST["phone"]
+
+                client.save()
+                request.user.save()
+                message = "success_update"
+
+            elif request.POST["action"] == "update_password":
+                request.user.set_password(request.POST['newpassword'])
+                request.user.save()
+                update_session_auth_hash(request, request.user)
+
+                message = "success_new_pass"
+
+        else:
+            message = "incorrect_pass"
+
+        context = {"message": message}
+
+        return JsonResponse(context)
 
 def logout_account(request):
     if request.user.is_authenticated:

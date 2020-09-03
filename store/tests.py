@@ -164,6 +164,39 @@ class ProfilTestCase(TestCase):
         response = c.get(reverse("store:account"))
         self.assertEqual(response.status_code, 200)
 
+    def test_update_infos(self):
+        c = C()
+        c.login(username='fake@mail.com', password='password')
+        user = User.objects.get(username='fake@mail.com')
+        initial_city = Client.objects.get(user=user).fk_adress.ville
+        response = c.post(reverse("store:account"), {
+        "action" : "update_infos",
+        "email" : 'fake@mail.com',
+        "name" : 'name',
+        "phone": '',
+        "number": 1,
+        "street" : 'newstreet',
+        "cplt" : 'cplt',
+        "cp" : 95000,
+        "city" : 'newcity',
+        "password" : 'password'
+        })
+        new_city = Client.objects.get(user=user).fk_adress.ville
+        self.assertEqual('new'+initial_city, new_city)
+        self.assertEqual(response.status_code, 200)
+
+    def test_update_pass(self):
+        c = C()
+        c.login(username='fake@mail.com', password='password')
+        response = c.post(reverse("store:account"), {
+        "action" : "update_password",
+        "newpassword" : "newpass",
+        "password": "password"
+        })
+        user = User.objects.get(username='fake@mail.com')
+        self.assertEqual(user.check_password("newpass"), True)
+        self.assertEqual(response.status_code, 200)
+
 class DeconnectTestCase(TestCase):
     def setUp(self):
         fake_dataset()
