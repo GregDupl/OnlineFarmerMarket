@@ -207,3 +207,9 @@ h5{
   background: none;
   border-color: blue;
 }
+
+#infosprofil p{
+  font-family: "josefinLight";
+  opacity: 1;
+  font-size: 1em;
+}
