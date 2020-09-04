@@ -36,9 +36,9 @@
 
           </div>
           <hr>
+          <div id="update_message" class="py-3" style="color:red"></div>
           <!-- DISPLAY INFOS PROFIL -->
           <div class="" id="infosprofil" style="display:block">
-            <div class="message"></div>
             <p>Nom : {{client.user.first_name|capfirst}}</p>
             <p>email : {{email}} </p>
             <p>adresse :
@@ -139,9 +139,14 @@
     </div>
     <hr>
     <div class="row pt-1">
-      <div class="offset-md-9 col-md-3">
-        <a class="btn btn-link btn-sm btn-block" style="color : red" id="logoutbutton" href="{%url 'store:delete_account'%}">Supprimer mon compte</a>
+      <div class="offset-5 col-md-7">
+        <a class="btn btn-link btn-sm btn-block text-right" style="color : red" id="deletebutton" href="#" style="display:block">Supprimer mon compte</a>
+      <div class="alert alert-danger alert-dismissible fade show text-right" id="alertdelete" role="alert" style="display:none">
+        <strong> Êtes-vous sûr ? </strong> Cette action est définitive !
+        <a href="{%url 'store:delete_account'%}"><button class="btn btn-danger ml-5" type="button" name="button">oui</button></a>
+        <button class="btn btn-secondary ml-5" id="abandon" type="button" name="button"> non </button>
       </div>
+    </div>
     </div>
   </div>
 </section>

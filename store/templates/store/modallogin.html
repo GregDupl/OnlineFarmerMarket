@@ -9,9 +9,9 @@
         </button>
       </div>
       <div class="modal-body" id="modalbodylogin">
+        <div class="py-2 px-4 message" style="color:red"></div>
         <form action="{%url 'store:login'%}" method="post" class="py-4" id="loginform">
           {% csrf_token %}
-
           <div class="form-group row px-4">
             <label for="email" class="col-sm-3 col-form-label">email * </label>
             <div class="col-sm-9">

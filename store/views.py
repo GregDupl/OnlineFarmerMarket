@@ -137,7 +137,7 @@ def login_form(request):
             if u.check_password(password):
                 user = authenticate(username=auth_email, password=password)
                 login(request, user)
-                message = "succes to connect"
+                message = "success"
 
                 client = Client.objects.get(user=user)
 
@@ -187,10 +187,8 @@ def login_form(request):
             cart.create_queryset(request)
             cart.to_cart_database(request, client, add_to_cart)
 
-            message = "new client created"
+            message = "success"
 
-
-    print(message)
     context = {"message": message}
 
     return JsonResponse(context)
@@ -232,14 +230,14 @@ def profil(request):
 
                 client.save()
                 request.user.save()
-                message = "success_update"
+                message = "success"
 
             elif request.POST["action"] == "update_password":
                 request.user.set_password(request.POST['newpassword'])
                 request.user.save()
                 update_session_auth_hash(request, request.user)
 
-                message = "success_new_pass"
+                message = "success"
 
         else:
             message = "incorrect_pass"

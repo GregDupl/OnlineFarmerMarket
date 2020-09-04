@@ -109,7 +109,22 @@ const login = () => {
     headers:{'X-CSRFToken': $('[name=csrfmiddlewaretoken]').val()},
     url:$("#loginform").attr('action'),
     data : data,
-    success: $("#ModalLogin").modal('hide'),
+    success:function(context){
+      var message = context.message
+      if (message == "incorect password"){
+        $("#modalbodylogin .message").text("Le mot de passe est incorrect")
+      }
+      else if (message == "incorrect id") {
+        $("#modalbodylogin .message").text("L'email est incorrect")
+      }
+      else if (message == "already exists") {
+        $("#modalbodylogin .message").text("Cet utilisateur existe déjà !")
+      }
+      else if (message == "success") {
+        $("#ModalLogin").modal('hide');
+        location.reload();
+      }
+    },
     dataType : "json"
   });
 };
@@ -373,12 +388,23 @@ function update_profil(form, data){
     headers:{'X-CSRFToken': $('[name=csrfmiddlewaretoken]').val()},
     url:$(form).attr('action'),
     data : data,
+    success:function(context){
+      var message = context.message;
+      if (message == "incorrect_pass") {
+        $("#update_message").text("Mot de passe incorrect")
+      }
+      else if (message == "success") {
+        location.reload();
+      }
+      $("#update_message")
+    },
     dataType : "json"
   });
 };
 
 $("#update_infos_button").click(function(event){
-  var text = $(this).text()
+  $("#update_message").text("");
+  var text = $(this).text();
   if (text == "Modifier") {
     $("#infosprofil").hide();
     $("#update_password_form").hide();
@@ -395,7 +421,8 @@ $("#update_infos_button").click(function(event){
 });
 
 $("#update_password_button").click(function(event){
-  var text = $(this).text()
+  var text = $(this).text();
+  $("#update_message").text("");
   if (text == "Changer de mot de passe") {
     $("#infosprofil").hide();
     $("#update_infos_form").hide();
@@ -443,6 +470,17 @@ $("#update_password_form").submit(function(event){
     update_profil(form, pass)
   }
   else{
-    alert("les mots de passe doivent être identique")
+    $("#update_message").text("les deux mots de passe doivent être identique")
   }
+});
+
+
+$("#deletebutton").click(function(event){
+  $(this).hide();
+  $("#alertdelete").show();
+});
+
+$("#abandon").click(function(event){
+  $("#deletebutton").show();
+  $("#alertdelete").hide();
 });
