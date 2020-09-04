@@ -41,7 +41,12 @@
             </a>
           </div>
           <div class="col-6 text-center">
-            <button class="btn btn-info" type="button" name="button">Passer commande</button>
+
+            {% if total < 15 %}
+            <button class="btn btn-info" data-min= "15" id="command" type="button" name="button" disabled>Passer commande</button>
+            {%else%}
+            <button class="btn btn-info" data-min= "15" id="command" type="button" name="button">Passer commande</button>
+            {%endif%}
           </div>
         </div>
       </div>

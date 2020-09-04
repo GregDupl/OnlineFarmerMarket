@@ -174,6 +174,14 @@ function update_total_cart() {
     total_result+=value
   };
   $("#total_cart").text(total_result.toFixed(2))
+
+  var min = $("#command").attr("data-min")
+  if (total_result < min) {
+    $("#command").prop("disabled", true)
+  }else{
+    $("#command").prop("disabled", false)
+  }
+
 };
 
 function update_cart(origin, value){
