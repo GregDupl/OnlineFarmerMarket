@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate, login, logout, update_session_auth
 from django.http import JsonResponse
 from django.db import IntegrityError
 from django.db.models import F
+from django.core.mail import EmailMessage
 
 def check_cart_session(request):
     if 'cart' not in request.session:
@@ -275,4 +276,23 @@ def adding_in_cart(request):
 
     context = {"message": "ok"}
 
+    return JsonResponse(context)
+
+def email(request):
+    admin_mail = User.objects.get(username="admin@farm").email
+
+    email = EmailMessage(
+    request.POST['subject'],
+    request.POST['message'],
+    request.POST['email'],
+    [admin_mail,],
+    )
+
+    try:
+        email.send()
+        message = "success"
+    except Exception:
+        message = "fail"
+        
+    context = {"message": message}
     return JsonResponse(context)

@@ -492,3 +492,36 @@ $("#abandon").click(function(event){
   $("#deletebutton").show();
   $("#alertdelete").hide();
 });
+
+
+// ****** CONTACT FORM ******
+$("#contactform").submit(function(event){
+  event.preventDefault();
+  $.ajax({
+    type:"POST",
+    headers:{'X-CSRFToken': $('[name=csrfmiddlewaretoken]').val()},
+    url:$("#contactform").attr('action'),
+    data : {
+      'subject' : $("#contactform input[name=subject]").val(),
+      'email' : $("#contactform input[name=email]").val(),
+      'message' : $("#contactform textarea[name=message]").val(),
+    },
+    success:function(context){
+      var message = context.message;
+      info = $("#contactinfo")
+      if (message == "success") {
+        info.text("message envoyé !")
+        info.css("color","green")
+        $("#contactform input[name=subject]").val("")
+        $("#contactform textarea[name=message]").val("")
+        setTimeout(function() {info.text("")}, 3000);
+
+      }
+      else {
+        info.text("Votre mesage n'a pas pu être envoyé")
+        info.css("color","red")
+      }
+    },
+    dataType : "json"
+  });
+});
