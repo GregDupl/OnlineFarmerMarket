@@ -219,3 +219,14 @@ class DeleteUserTestCase(TestCase):
         new_number = User.objects.count()
         self.assertEqual(response.status_code, 302)
         self.assertEqual(initial_number-1, new_number)
+
+class EmailTestCase(TestCase):
+    def test_send_email(self):
+        User.objects.create(username="admin@farm", email="admin@mail.com", password="password")
+        c = C()
+        response = c.post(reverse("store:contact"), {
+        "email":"fake_email",
+        "subject":"fake_subject",
+        "message":"fake_message"
+        })
+        self.assertEqual(response.status_code, 200)
