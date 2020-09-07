@@ -1,0 +1,107 @@
+{%extends "store/base.html"%}
+{% load static %}
+
+{%block content%}
+<section class="mt-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 px-5 py-4">
+        <h5>Les produits de votre panier sont réservés pendant 10min. Passé ce délai, nous ne garantissons plus leur disponibilité.</h5>
+      </div>
+    </div>
+    <div class="row h-100">
+
+      <div class="col-md-5">
+        <div class="py-4 px-4 border rounded" style="background-color:white">
+          <h5>Email</h5>
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="basic-addon1">@</span>
+            </div>
+            <input type="text" class="form-control" placeholder="Username" value="{{request.user.username}}">
+          </div>
+        </div>
+
+        <div class="mt-2 py-4 px-4 border rounded" style="background-color:white">
+          <h5>Choix de collecte</h5>
+          <div class="input-group mb-3">
+            <select class="custom-select" id="inputGroupSelect01">
+              <option value="1">Retrait en direct</option>
+              <option value="2">Retrait en click&collect</option>
+              <option value="3">Livraison</option>
+            </select>
+          </div>
+          <div class="input-group mb-3">
+          <select class="custom-select" id="inputGroupSelect01">
+            <option value="1">Lundi 8h-12h Marché d'armentières</option>
+          </select>
+          </div>
+        </div>
+
+        <div class="mt-2 mb-2 py-4 px-4 border rounded" style="background-color:white">
+          <h5>Informations de paiment</h5>
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="card_name">Nom</span>
+            </div>
+            <input type="text" class="form-control">
+          </div>
+
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="card_name">N° de carte</span>
+            </div>
+            <input type="text" class="form-control" placeholder="1111-2222-3333-4444">
+          </div>
+
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="">expiration</span>
+            </div>
+            <input type="text" class="form-control">
+            <input type="text" class="form-control">
+          </div>
+
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="card_name">CVV</span>
+            </div>
+            <input type="text" class="form-control" placeholder="352">
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-7">
+        <div class="py-4 px-5 border rounded" style="background-color:white">
+          <h5>DETAIL DE COMMANDE</h5>
+          <table class="table">
+            <thead class="">
+              <tr>
+                <th scope="col" colspan="2">Produit</th>
+                <th scope="col">Quantité</th>
+                <th scope="col" style="text-align : right">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {%for elt in cart%}
+                <tr data-product="{{elt.fk_variety.id}}" data-price="{{elt.fk_variety.price}}">
+                  <td style="width:6em"><div class="table-image"></div></td>
+                  <td class="text-center">{{elt.fk_variety.fk_product.name|capfirst}} - {{elt.fk_variety.name}}</td>
+                  <td>
+                    {{elt.quantity}}
+                  </td>
+                  <td style="text-align : right" class="subtotal">{{elt.total}}</td>
+                </tr>
+              {%endfor%}
+              <tr>
+                <td colspan="4" style="text-align : right" id="total_cart">{{total}}</td>
+              </tr>
+            </tbody>
+          </table>
+          <button class="btn btn-info" type="button" name="button">Commander</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{%endblock%}

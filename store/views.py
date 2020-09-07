@@ -293,6 +293,19 @@ def email(request):
         message = "success"
     except Exception:
         message = "fail"
-        
+
     context = {"message": message}
     return JsonResponse(context)
+
+def command(request):
+    cart = Cart.objects.filter(fk_client=Client.objects.get(user=request.user))
+    total_cart = 0
+    for product in cart:
+        product.total = product.quantity * product.fk_variety.price
+        total_cart += product.total
+
+    context = {
+    "cart" : cart,
+    "total" : total_cart
+    }
+    return render(request, 'store/command.html', context)

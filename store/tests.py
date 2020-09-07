@@ -230,3 +230,13 @@ class EmailTestCase(TestCase):
         "message":"fake_message"
         })
         self.assertEqual(response.status_code, 200)
+
+class CommandTestCase(TestCase):
+    def setUp(self):
+        fake_dataset()
+
+    def test_command(self):
+        c = C()
+        c.login(username='fake@mail.com', password='password')
+        response = c.get(reverse("store:command"))
+        self.assertEqual(response.status_code, 200)
