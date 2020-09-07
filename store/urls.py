@@ -15,4 +15,5 @@ urlpatterns = [
     path('delete', views.delete_account, name="delete_account"),
     path('cart', views.adding_in_cart, name="adding_cart"),
     path('contact', views.email, name="contact"),
+    path('commander', views.command, name="command"),
 ]
