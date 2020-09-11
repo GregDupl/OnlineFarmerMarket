@@ -58,7 +58,6 @@ class Database():
             start_time = elt[1],
             end_time = elt[2],
             fk_command_type = CommandType.objects.get(pk=elt[3]),
-            max_command = elt[4]
             )
     def insert_emplacement_retrait(self):
         for elt in self.emplacement_retrait:

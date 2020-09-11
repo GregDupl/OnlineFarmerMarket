@@ -98,7 +98,7 @@ class Product(models.Model):
 class Variety(models.Model):
     name = models.CharField(max_length=250)
     price = models.DecimalField(max_digits=4, decimal_places=2)
-    stock = models.IntegerField()
+    stock = models.PositiveIntegerField()
     image = models.URLField(default="no_url_product")
     fk_unity = models.ForeignKey(Unity, on_delete=models.CASCADE)
     fk_product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -128,7 +128,6 @@ class TimeSlot(models.Model):
     end_time = models.TimeField(auto_now=False, auto_now_add=False)
     fk_command_type = models.ForeignKey(CommandType, on_delete=models.CASCADE,
     limit_choices_to=Q(type="withdrawal") | Q(type="delivery"))
-    max_command = models.IntegerField()
 
     def __str__(self):
         title = "{} de {} à {} - {}".format(
@@ -174,12 +173,25 @@ class Locker(models.Model):
         return title
 
     class Meta:
+        constraints= [
+        models.UniqueConstraint(fields=['number','fk_collect_location'],
+        name='unicque_locker_location')
+        ]
         verbose_name = 'Casier click&collect'
         verbose_name_plural = 'Casiers click&collect'
 
+
+class DeliverySlots(models.Model):
+    fk_time_slot = models.ForeignKey(TimeSlot, on_delete=models.CASCADE,
+    limit_choices_to={"fk_command_type":3}
+    )
+    max_command = models.PositiveIntegerField()
+    delivery_area = models.CharField(max_length=250)
+
+
 class Delivery(models.Model):
-    instruction = models.CharField(max_length=250)
-    fk_time_slot = models.ForeignKey(TimeSlot, on_delete=models.CASCADE)
+    instruction = models.TextField()
+    fk_delivery_slot = models.ForeignKey(DeliverySlots, on_delete=models.CASCADE, default=None)
 
     class Meta:
         verbose_name = 'Livraison'
@@ -191,6 +203,7 @@ class DirectWithdrawal(models.Model):
     limit_choices_to={"fk_command_type":1})
     fk_time_slot = models.ForeignKey(TimeSlot, on_delete=models.CASCADE,
     limit_choices_to={"fk_command_type":1})
+    max_command = models.PositiveIntegerField(default=50)
 
     def __str__(self):
         return str(self.fk_collect_location)
@@ -236,9 +249,9 @@ class Cart(models.Model):
 class Order(models.Model):
     number = models.IntegerField()
     fk_client = models.ForeignKey(Client, on_delete=models.CASCADE)
-    fk_locker = models.ForeignKey(Locker, on_delete=models.CASCADE, blank=True, null=True)
+    fk_locker = models.OneToOneField(Locker, on_delete=models.CASCADE, blank=True, null=True)
     fk_direct_withdrawal = models.ForeignKey(DirectWithdrawal, on_delete=models.CASCADE, blank=True, null=True)
-    fk_delivery = models.ForeignKey(Delivery, on_delete=models.CASCADE, blank=True, null=True)
+    fk_delivery = models.OneToOneField(Delivery, on_delete=models.CASCADE, blank=True, null=True)
     historic_status = models.ManyToManyField(CommandStatus, through='Historic')
     variety = models.ManyToManyField(Variety, through='OrderDetail')
 
@@ -272,3 +285,14 @@ class Historic(models.Model):
         ]
         verbose_name = 'Historique commande'
         verbose_name_plural = 'Historique commande'
+
+class ClientReadyToCommand(models.Model):
+    fk_client = models.OneToOneField(Client, on_delete=models.CASCADE)
+    validation_date = models.DateTimeField()
+    block = models.BooleanField(default=False)
+
+class MinimumCommand(models.Model):
+    amount = models.PositiveIntegerField()
+
+class MessageToClient(models.Model):
+    message = models.TextField()
