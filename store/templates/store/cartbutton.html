@@ -1,14 +1,18 @@
 <div class="cart_interface" data-id={{id}}>
 
-  {%if elt.quantity%}
+  {%if quantity%}
   <div class="modif" style="display:block" data-url="{%url 'store:cart'%}">
-    {%if elt.quantity == 1%}
+    {%if quantity == 1%}
       <button class=" btn btn-info changebutton minus del"> del </button>
     {%else%}
       <button class=" btn btn-info changebutton minus"> - </button>
     {%endif%}
     <input class=" quantity" type="text" inputmode="numeric" max={{stock}} value={{quantity}} min="1">
+    {%if quantity == stock %}
+    <button class=" btn btn-info changebutton plus disabled"> max </button>
+    {%else%}
     <button class=" btn btn-info changebutton plus"> + </button>
+    {%endif%}
   </div>
 
   {%else%}
@@ -19,7 +23,7 @@
   </div>
   {%endif%}
 
-  {%if elt.quantity%}
+  {%if quantity%}
   <button type="submit" class="btn btn-info my-2 add" style="display:none" data-id={{id}} data-url="{%url 'store:adding_cart'%}" name="button">+</button>
   {%else%}
   <button type="submit" class="btn btn-info my-2 add" style="display:block" data-id={{id}} data-url="{%url 'store:adding_cart'%}" name="button">+</button>

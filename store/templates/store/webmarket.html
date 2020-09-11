@@ -39,10 +39,10 @@
                   {%endif%}
                   >
                   <div class="col-12">
-                    {%if elt.image != "no_url_product"%}
-                      <img src="{{elt.image}}" alt="" class="img-fluid mb-2 border rounded">
-                    {%else%}
+                    {%if elt.image != "url"%}
                       <img src="{% static 'store/img/tomato.jpg' %}" alt="" class="img-fluid mb-2 border rounded">
+                    {%else%}
+                    <img src="{{elt.image}}" alt="" class="img-fluid mb-2 border rounded">
                     {%endif%}
 
                     {%if elt.stock == 0%}
@@ -57,7 +57,6 @@
                     <h5 class="mt-2 pl-2">{{elt.fk_product.name|capfirst}} <br>{{elt.name|capfirst}}</h5>
                     <p class="mt-3 pl-2">{{elt.price}}€ / {{elt.fk_unity.type}}</p>
                     <div class="mb-3">
-
                     {% with id=elt.id quantity=elt.quantity stock=elt.stock %}
                       {%include 'store/cartbutton.html'%}
                     {%endwith%}
