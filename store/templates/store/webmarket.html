@@ -39,15 +39,10 @@
                   {%endif%}
                   >
                   <div class="col-12">
-                    {%if elt.image != "url"%}
-                      <img src="{% static 'store/img/tomato.jpg' %}" alt="" class="img-fluid mb-2 border rounded">
-                    {%else%}
-                    <img src="{{elt.image}}" alt="" class="img-fluid mb-2 border rounded">
-                    {%endif%}
-
-                    {%if elt.stock == 0%}
+                    <img src="{{elt.image.url}}" alt="" class="img-fluid mb-2 border rounded">
+                  {%if elt.stock == 0%}
                     <p class="out_of_stock py-2 px-2"> RUPTURE DE STOCK</p>
-                    {%endif%}
+                  {%endif%}
                   </div>
 
                   </div>
