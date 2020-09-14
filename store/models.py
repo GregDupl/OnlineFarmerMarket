@@ -99,7 +99,7 @@ class Variety(models.Model):
     name = models.CharField(max_length=250)
     price = models.DecimalField(max_digits=4, decimal_places=2)
     stock = models.PositiveIntegerField()
-    image = models.URLField(default="no_url_product")
+    image = models.ImageField(upload_to="medias_variety/")
     fk_unity = models.ForeignKey(Unity, on_delete=models.CASCADE)
     fk_product = models.ForeignKey(Product, on_delete=models.CASCADE)
     available = models.BooleanField(default=True)
