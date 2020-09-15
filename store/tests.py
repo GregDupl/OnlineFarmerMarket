@@ -235,8 +235,19 @@ class CommandTestCase(TestCase):
     def setUp(self):
         fake_dataset()
 
-    def test_command(self):
+    def test_command_whitout_referer(self):
         c = C()
         c.login(username='fake@mail.com', password='password')
         response = c.get(reverse("store:command"))
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
+
+class ReservationTestCase(TestCase):
+    def test_reservation(self):
+            fake_variety, fake_client = fake_dataset()
+            c = C()
+            c.login(username='fake@mail.com', password='password')
+            fake_cart = Cart.objects.create(fk_client = fake_client, fk_variety = fake_variety, quantity=15)
+            response = c.post(reverse("store:reservation"), {
+            "button":True
+            })
+            self.assertEqual(response.status_code, 200)
