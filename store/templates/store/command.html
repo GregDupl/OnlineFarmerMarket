@@ -6,7 +6,10 @@
   <div class="container">
     <div class="row">
       <div class="col-12 px-5 py-4">
-        <h5>Les produits de votre panier sont réservés pendant 10min. Passé ce délai, nous ne garantissons plus leur disponibilité.</h5>
+        <h5>Les produits de votre panier sont réservés pendant 5 min.
+          <br>
+          Passé ce délai, ou en quittant cette page, nous ne garantissons plus leur disponibilité.
+        </h5>
       </div>
     </div>
     <div class="row h-100">
@@ -25,17 +28,38 @@
         <div class="mt-2 py-4 px-4 border rounded" style="background-color:white">
           <h5>Choix de collecte</h5>
           <div class="input-group mb-3">
-            <select class="custom-select" id="inputGroupSelect01">
-              <option value="1">Retrait en direct</option>
-              <option value="2">Retrait en click&collect</option>
-              <option value="3">Livraison</option>
+            <select class="custom-select" id="choicecollect">
+              <option value="" id="first" selected disabled hidden>choisir...</option>
+              <option value="withdrawal">Retrait en direct</option>
+              <option value="clickcollect" {%if not locker%}disabled{%endif%}>Retrait en click&collect</option>
+              {%if client_type == "particulier"%}
+              <option value="delivery">Livraison</option>
+              {%endif%}
             </select>
           </div>
+
+        <div class="optioncollect" style="display:none" id="withdrawal">
           <div class="input-group mb-3">
-          <select class="custom-select" id="inputGroupSelect01">
-            <option value="1">Lundi 8h-12h Marché d'armentières</option>
+          <select class="custom-select">
+              {%for elt in directwithdrawal%}
+              {%if elt.max_command > 0%}
+              <option value="{{elt.fk_collect_location.name}}">{{elt.fk_time_slot.fk_day.name|capfirst}} - {{elt.fk_time_slot.start_time|date:"H:i"}} à {{elt.fk_time_slot.end_time|date:"H:i"}} - {{elt.fk_collect_location.name|capfirst}}</option>
+              {%endif%}
+              {%endfor%}
           </select>
           </div>
+        </div>
+
+        <div class="optioncollect" style="display:none" id="clickcollect">
+          <div class="input-group mb-3">
+          <select class="custom-select">
+              {%for elt in locker%}
+              <option value="{{elt.fk_collect_location.name}}">{{elt.name}}</option>
+              {%endfor%}
+          </select>
+          </div>
+        </div>
+        <div class="" id="Ajaxinfo"></div>
         </div>
 
         <div class="mt-2 mb-2 py-4 px-4 border rounded" style="background-color:white">
@@ -74,6 +98,7 @@
       <div class="col-md-7">
         <div class="py-4 px-5 border rounded" style="background-color:white">
           <h5>DETAIL DE COMMANDE</h5>
+          <div class="" style="color:red"> {{message}} </div>
           <table class="table">
             <thead class="">
               <tr>
@@ -85,7 +110,9 @@
             <tbody>
               {%for elt in cart%}
                 <tr data-product="{{elt.fk_variety.id}}" data-price="{{elt.fk_variety.price}}">
-                  <td style="width:6em"><div class="table-image"></div></td>
+                  <td style="width:6em">
+                    <img src="{{elt.fk_variety.image.url}}" alt="" class="img-fluid mb-2 border rounded my-auto">
+                  </td>
                   <td class="text-center">{{elt.fk_variety.fk_product.name|capfirst}} - {{elt.fk_variety.name}}</td>
                   <td>
                     {{elt.quantity}}
