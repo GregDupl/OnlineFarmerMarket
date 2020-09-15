@@ -7,6 +7,13 @@ from django.http import JsonResponse
 from django.db import IntegrityError
 from django.db.models import F
 from django.core.mail import EmailMessage
+import datetime
+from django.http import HttpResponse
+from django.urls import reverse
+from django.db import transaction
+from django.views.decorators.cache import never_cache
+##################
+
 
 def check_cart_session(request):
     if 'cart' not in request.session:
@@ -20,10 +27,30 @@ def add_to_cart(request, client, variety, quantity):
         existing_record.quantity = quantity
         existing_record.save()
 
+def before(request):
+    if request.user.is_authenticated:
+        client = Client.objects.get(user=request.user)
+        if ClientReadyToCommand.objects.filter(fk_client=client).exists():
+            to_delete = ClientReadyToCommand.objects.get(fk_client=client)
+            if to_delete.block == False:
+                try:
+                    to_delete.block = True
+                    to_delete.save()
+                    to_delete.delete()
+                    cart = UserCart(client)
+                    cart.unsave()
+                except DoesNotExist:
+                    pass
+
+##################
+
 def index(request):
+    before(request)
     return render(request, 'store/index.html')
 
 def webmarket(request):
+    before(request)
+
     variety = Variety.objects.all()
     category = Category.objects.all()
 
@@ -52,6 +79,8 @@ def webmarket(request):
     return render(request,'store/webmarket.html', context)
 
 def marketplaces(request):
+    before(request)
+
     places = DirectWithdrawal.objects.all()
     locker = CollectLocation.objects.filter(fk_command_type__type = "locker")
     restaurant = TimeSlot.objects.filter(fk_command_type__type = "delivery")
@@ -65,6 +94,8 @@ def marketplaces(request):
     return render(request,'store/marketplaces.html', context)
 
 def cart(request):
+    before(request)
+
     if request.method == 'GET':
         if request.user.is_authenticated :
             query = Cart.objects.filter(fk_client=Client.objects.get(user=request.user))
@@ -83,7 +114,7 @@ def cart(request):
 
         context = {
         "cart" : query,
-        "total" : total_cart
+        "total" : total_cart,
         }
 
 
@@ -129,6 +160,8 @@ def cart(request):
         return JsonResponse(context)
 
 def login_form(request):
+    before(request)
+
     auth_email = request.POST['email'].lower()
     password = request.POST['password']
 
@@ -195,7 +228,7 @@ def login_form(request):
     return JsonResponse(context)
 
 def profil(request):
-
+    before(request)
     client = Client.objects.get(user=request.user)
 
     if request.method == 'GET':
@@ -248,11 +281,15 @@ def profil(request):
         return JsonResponse(context)
 
 def logout_account(request):
+    before(request)
+
     if request.user.is_authenticated:
         logout(request)
     return redirect('store:index')
 
 def delete_account(request):
+    before(request)
+
     if request.user.is_authenticated:
         user = User.objects.get(username = request.user.get_username())
         logout(request)
@@ -261,6 +298,8 @@ def delete_account(request):
     return redirect('store:index')
 
 def adding_in_cart(request):
+    before(request)
+
     id_product = request.POST["product"]
     quantity = request.POST["quantity"]
     variety = Variety.objects.get(pk=id_product)
@@ -279,6 +318,7 @@ def adding_in_cart(request):
     return JsonResponse(context)
 
 def email(request):
+    before(request)
     admin_mail = User.objects.get(username="admin@farm").email
 
     email = EmailMessage(
@@ -297,15 +337,76 @@ def email(request):
     context = {"message": message}
     return JsonResponse(context)
 
-def command(request):
-    cart = Cart.objects.filter(fk_client=Client.objects.get(user=request.user))
-    total_cart = 0
-    for product in cart:
-        product.total = product.quantity * product.fk_variety.price
-        total_cart += product.total
 
-    context = {
-    "cart" : cart,
-    "total" : total_cart
-    }
-    return render(request, 'store/command.html', context)
+
+def reservation(request):
+    button_cart = request.POST.get('button', False)
+    if button_cart :
+        client = Client.objects.get(user=request.user)
+        cart = Cart.objects.filter(fk_client=client)
+        message = ""
+
+        try:
+            with transaction.atomic():
+                for obj in cart :
+                    variety = obj.fk_variety
+                    print(variety)
+                    variety.stock = F('stock') - obj.quantity
+                    variety.save()
+
+        except IntegrityError:
+            for obj in Cart.objects.filter(fk_client=client):
+                if obj.quantity > obj.fk_variety.stock:
+                    obj.quantity = obj.fk_variety.stock
+                    obj.save()
+            message = "Votre panier a été modifié en fonction des stocks restants"
+            response = 'confirm'
+            url_cible = reverse('store:cart')
+        else:
+            ClientReadyToCommand.objects.create(
+            fk_client = client,
+            validation_date = datetime.datetime.now()
+            )
+            response = 'command'
+            url_cible = reverse('store:command')
+
+        context = {
+        'response' : response,
+        'url': url_cible,
+        'message': message
+        }
+
+        return JsonResponse(context)
+
+
+@never_cache
+def command(request):
+    if 'Referer' in request.headers:
+        client = Client.objects.get(user=request.user)
+        cart = Cart.objects.filter(fk_client=client)
+        cart_user = UserCart(client)
+        total_cart, cart = cart_user.total()
+
+        places = DirectWithdrawal.objects.all()
+        locker = Locker.objects.filter(disponibility=True)
+        restaurant = TimeSlot.objects.filter(fk_command_type__type = "delivery")
+
+        locker_location = CollectLocation.objects.filter(fk_command_type__type = "locker")
+        for location in locker_location:
+            list = Locker.objects.filter(fk_collect_location=location.id, disponibility=True)
+            if len(list) == 0:
+                locker_location = locker_location.exclude(name=location.name)
+
+        context = {
+        "cart" : cart,
+        "total" : total_cart,
+        "directwithdrawal" : places,
+        "locker": locker_location,
+        "delivery":restaurant,
+        "client_type" : client.fk_client_type.type_client
+        }
+
+        return render(request, "store/command.html", context)
+
+    else:
+        return redirect('store:index') # avoid access from adress bar
