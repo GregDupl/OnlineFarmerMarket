@@ -1,4 +1,5 @@
 from store.models import *
+from django.db.models import F
 
 class CartObject():
     """Create a cart object with variety and quantity attributes """
@@ -30,3 +31,23 @@ class CartSession(CartObject, Variety):
             variety = object.fk_variety
             quantity = object.quantity
             add(request,client,variety,quantity)
+
+
+class UserCart():
+    def __init__(self, client):
+        self.client = client
+        self.cart_queryset = Cart.objects.filter(fk_client=self.client)
+
+
+    def total(self):
+        total_cart = 0
+        for product in self.cart_queryset:
+            product.total = product.quantity * product.fk_variety.price
+            total_cart += product.total
+        return total_cart, self.cart_queryset
+
+    def unsave(self):
+        for obj in self.cart_queryset :
+            variety = obj.fk_variety
+            variety.stock = F('stock') + obj.quantity
+            variety.save()

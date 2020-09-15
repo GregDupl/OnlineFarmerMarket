@@ -5,8 +5,14 @@
 <section class="mt-2">
   <div class="container">
     <div class="row h-100">
-      <div class="offset-lg-1 col-lg-10 my-auto">
-        <table class="table" data-url="{%url 'store:cart'%}">
+      <div class="col-sm-2 d-none d-md-block text-center my-5">
+        <img src="{% static 'store/img/aubergine.png' %}" alt="" class="img-fluid img-thumbnail dessin" id="radis">
+      </div>
+      <div class="col-12 col-md-8 my-auto">
+        <div class="py-4 px-5 mt-5 border rounded" style="background-color:white">
+          <h5>MON PANIER</h5>
+          <div class="" style="color:red"> {{message}} </div>
+        <table class="table mt-4" data-url="{%url 'store:cart'%}">
           <thead class="">
             <tr>
               <th scope="col" colspan="2">Produit</th>
@@ -17,7 +23,9 @@
           <tbody>
             {%for elt in cart%}
               <tr data-product="{{elt.fk_variety.id}}" data-price="{{elt.fk_variety.price}}">
-                <td style="width:6em"><div class="table-image"></div></td>
+                <td style="width:7em">
+                  <img src="{{elt.fk_variety.image.url}}" alt="" class="img-fluid mb-2 border rounded my-auto">
+                </td>
                 <td class="text-center">{{elt.fk_variety.fk_product.name|capfirst}} - {{elt.fk_variety.name}}</td>
                 <td>
 
@@ -34,6 +42,7 @@
             </tr>
           </tbody>
         </table>
+        </div>
         <div class="row my-5">
           <div class="col-6 text-center">
             <a href="{%url 'store:webmarket'%}">
@@ -42,12 +51,15 @@
           </div>
           <div class="col-6 text-center">
             {%if request.user.is_authenticated%}
-            <button class="btn btn-info" onclick="location.href='{%url 'store:command'%}'" data-min= "15" id="command" type="button" name="button" {% if total < 15 %}disabled{%endif%}>Vérifier le stock et passer commande</button>
+            <button class="btn btn-info" data-reservation="{%url 'store:reservation'%}" data-min= "15" id="command" type="button" name="button" {% if total < 15 %}disabled{%endif%}>Vérifier le stock et passer commande</button>
             {%else%}
             <button class="btn btn-info" data-toggle="modal" data-target="#ModalLogin" data-min= "15" id="command" type="button" name="button" {% if total < 15 %}disabled{%endif%}>Vérifier le stock et passer commande</button>
             {%endif%}
           </div>
         </div>
+      </div>
+      <div class="col-sm-2 d-none d-md-block text-center my-auto">
+        <img src="{% static 'store/img/artichaut.png' %}" alt="" class="img-fluid img-thumbnail dessin" id="aubergine">
       </div>
     </div>
   </div>

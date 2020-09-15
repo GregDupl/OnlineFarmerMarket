@@ -11,27 +11,35 @@
 </head>
 
 <body>
-<nav class="navbar navbar-dark bg-dark navbar-expand-lg fixed-top">
-  <a class="navbar-brand" href="{%url 'store:index'%}">
-    <img src="{%static 'store/img/logo.png'%}" width="35" height="35" alt="logo">
-  </a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-    <div class="navbar-nav">
-      <a class="nav-item nav-link" href="{%url 'store:webmarket'%}">Marché en ligne</a>
-      <a class="nav-item nav-link" href="{%url 'store:marketplaces'%}">Points de vente</a>
-      <a class="nav-item nav-link" href="#">Actu</a>
-      {%if request.user.is_authenticated%}
-      <a class="nav-item nav-link" href="{%url 'store:account'%}">Compte</a>
-      {%else%}
-      <a class="nav-item nav-link" data-toggle="modal" data-target="#ModalLogin" href="#">Login</a>
-      {%endif%}
-      <a class="nav-item nav-link" href="{%url 'store:cart'%}">Mon panier</a>
+  <div class="fixed-top">
+    <nav class="navbar navbar-dark bg-dark navbar-expand-lg ">
+      <a class="navbar-brand" href="{%url 'store:index'%}">
+        <img src="{%static 'store/img/logo.png'%}" width="35" height="35" alt="logo">
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+          <a class="nav-item nav-link" href="{%url 'store:webmarket'%}">Marché en ligne</a>
+          <a class="nav-item nav-link" href="{%url 'store:marketplaces'%}">Points de vente</a>
+          <a class="nav-item nav-link" href="#">Actu</a>
+          {%if request.user.is_authenticated%}
+          <a class="nav-item nav-link" href="{%url 'store:account'%}">Compte</a>
+          {%else%}
+          <a class="nav-item nav-link" data-toggle="modal" data-target="#ModalLogin" href="#">Login</a>
+          {%endif%}
+          <a class="nav-item nav-link" href="{%url 'store:cart'%}">Mon panier</a>
+        </div>
+      </div>
+    </nav>
+    <!--
+    <div class="adminmessage" style="background-color:#5a5e63">
+      <p class="py-1 px-3" style="color:white"> Bonjour, à partir du bla bla bla nous serons bla bla </p>
     </div>
+  -->
   </div>
-</nav>
+
 
 
 {%include "store/modallogin.html"%}

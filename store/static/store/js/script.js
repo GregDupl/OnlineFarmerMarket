@@ -525,3 +525,39 @@ $("#contactform").submit(function(event){
     dataType : "json"
   });
 });
+
+
+// ****** RESERVATION CART BUTTON ******
+$("#command").click(function(){
+  $(this).text("verification en cours...")
+  $(this).prop("disabled",true)
+  $.ajax({
+    type:"POST",
+    headers:{'X-CSRFToken': $('[name=csrfmiddlewaretoken]').val()},
+    url:$(this).attr('data-reservation'),
+    data : {
+      'button' : true,
+    },
+    success:function(context){
+      if (context.response == 'confirm') {
+        alert(context.message)
+      }
+      var cible = context.url
+      location.assign(cible)
+    },
+    dataType : "json"
+  });
+})
+
+
+// ****** CHOICE OPTIONS COMMANDE ******
+$("#choicecollect").click(function(){
+  choice = $( "#choicecollect option:selected").attr("value");
+  $(".optioncollect").each(function(){
+    if ($(this).attr("id") == choice) {
+      $(this).show()
+    }else{
+      $(this).hide()
+    }
+  });
+});
