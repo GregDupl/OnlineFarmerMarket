@@ -30,16 +30,6 @@ class CommandType(models.Model):
         verbose_name_plural = 'Types de commande'
 
 
-class CommandStatus(models.Model):
-    status = models.CharField(max_length=250)
-
-    def __str__(self):
-        return self.status
-
-    class Meta:
-        verbose_name = 'Statut commande'
-        verbose_name_plural = 'Statuts commande'
-
 
 class ClientType(models.Model):
     type_client = models.CharField(max_length=50)
@@ -247,12 +237,10 @@ class Cart(models.Model):
 
 
 class Order(models.Model):
-    number = models.IntegerField()
     fk_client = models.ForeignKey(Client, on_delete=models.CASCADE)
     fk_locker = models.OneToOneField(Locker, on_delete=models.CASCADE, blank=True, null=True)
     fk_direct_withdrawal = models.ForeignKey(DirectWithdrawal, on_delete=models.CASCADE, blank=True, null=True)
     fk_delivery = models.OneToOneField(Delivery, on_delete=models.CASCADE, blank=True, null=True)
-    historic_status = models.ManyToManyField(CommandStatus, through='Historic')
     variety = models.ManyToManyField(Variety, through='OrderDetail')
 
     def __str__(self):
@@ -261,6 +249,13 @@ class Order(models.Model):
     class Meta:
         verbose_name = 'Commande'
         verbose_name_plural = 'Commandes'
+
+class OrderHistoric(models.Model):
+    fk_order = models.OneToOneField(Order, on_delete=models.CASCADE)
+    date_creation = models.DateField(auto_now_add=True)
+    date_end = models.DateField(null=True)
+    date_cancellation = models.DateField(null=True)
+
 
 class OrderDetail(models.Model):
     fk_order = models.ForeignKey(Order, on_delete=models.CASCADE)
@@ -279,21 +274,6 @@ class OrderDetail(models.Model):
         verbose_name_plural = 'Détails de commande'
 
 
-class Historic(models.Model):
-    fk_order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    fk_command_status = models.ForeignKey(CommandStatus, on_delete=models.CASCADE)
-    date = models.DateField(auto_now_add=True)
-
-    def __str__(self):
-        return str("{} - {} - {}".format(self.fk_order, self.fk_command_status, self.date))
-
-    class Meta:
-        constraints= [
-        models.UniqueConstraint(fields=['fk_order','fk_command_status'],
-        name='unique_order_status')
-        ]
-        verbose_name = 'Historique commande'
-        verbose_name_plural = 'Historique commande'
 
 class ClientReadyToCommand(models.Model):
     fk_client = models.OneToOneField(Client, on_delete=models.CASCADE)

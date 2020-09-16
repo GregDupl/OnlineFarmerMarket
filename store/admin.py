@@ -36,7 +36,7 @@ class AdminCodeAdmin(admin.ModelAdmin):
         return False
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('number','fk_client','fk_direct_withdrawal','fk_locker','fk_delivery')
+    list_display = ('fk_client','fk_direct_withdrawal','fk_locker','fk_delivery')
 
 class CartAdmin(admin.ModelAdmin):
     list_display = ('fk_client','fk_variety', 'quantity')
@@ -61,7 +61,6 @@ admin.site.register(Variety, VarietyAdmin)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(CommandType, CommandTypeAdmin)
 admin.site.register(ClientType, ClientTypeAdmin)
-admin.site.register(CommandStatus)
 admin.site.register(Category)
 admin.site.register(Unity)
 admin.site.register(TimeSlot)
@@ -76,4 +75,3 @@ admin.site.register(MinimumCommand,MinimumCommandAdmin)
 admin.site.register(MessageToClient)
 admin.site.register(ClientReadyToCommand)
 admin.site.register(OrderDetail, OrderDetailAdmin)
-admin.site.register(Historic)
