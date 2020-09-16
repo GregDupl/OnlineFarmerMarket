@@ -132,7 +132,6 @@ class AFarmdataTestCase(TestCase):
         fake_database.fill_database()
         self.assertEqual(len(Adress.objects.all()), len(fake_database.adress))
         self.assertEqual(len(CommandType.objects.all()), len(fake_database.command_type))
-        self.assertEqual(len(CommandStatus.objects.all()), len(fake_database.command_status))
         self.assertEqual(len(ClientType.objects.all()), len(fake_database.client_type))
         self.assertEqual(len(Unity.objects.all()), len(fake_database.unity))
         self.assertEqual(len(Day.objects.all()), len(fake_database.day))

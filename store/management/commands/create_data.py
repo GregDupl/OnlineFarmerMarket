@@ -8,7 +8,6 @@ class Database():
     def __init__(self):
         self.unity = DATA["unity_product"]
         self.command_type = DATA["command_type"]
-        self.command_status = DATA["command_status"]
         self.client_type = DATA["client_type"]
         self.admin_code = 123456
         self.adress = DATA["adresse"]
@@ -27,9 +26,6 @@ class Database():
         for elt in self.command_type:
             CommandType.objects.create(type = elt)
 
-    def insert_command_status(self):
-        for item in self.command_status:
-            CommandStatus.objects.create(status = item)
 
     def insert_client_type(self):
         for item in self.client_type:
@@ -106,7 +102,6 @@ class Database():
     def fill_database(self):
         self.insert_adress()
         self.insert_command_type()
-        self.insert_command_status()
         self.insert_client_type()
         self.insert_unity()
         self.insert_admin_code()
