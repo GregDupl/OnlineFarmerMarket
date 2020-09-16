@@ -28,6 +28,7 @@ class ClientTypeAdmin(admin.ModelAdmin):
         return False
     def has_add_permission(self, request, obj=None):
         return False
+
 class AdminCodeAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return False
@@ -45,6 +46,12 @@ class ClientAdmin(admin.ModelAdmin):
     list_display = ('user', 'phone', 'fk_adress','fk_client_type')
     list_filter = ('fk_client_type', )
 
+class MinimumCommandAdmin(admin.ModelAdmin):
+    def has_delete_permission(self, request, obj=None):
+        return False
+    def has_add_permission(self, request, obj=None):
+        return False
+
 admin.site.register(Adress, AdressAdmin)
 admin.site.register(Variety, VarietyAdmin)
 admin.site.register(Product, ProductAdmin)
@@ -61,3 +68,6 @@ admin.site.register(DirectWithdrawal)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(Cart, CartAdmin)
 admin.site.register(Client, ClientAdmin)
+admin.site.register(MinimumCommand,MinimumCommandAdmin)
+admin.site.register(MessageToClient)
+admin.site.register(ClientReadyToCommand)

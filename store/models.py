@@ -291,8 +291,17 @@ class ClientReadyToCommand(models.Model):
     validation_date = models.DateTimeField()
     block = models.BooleanField(default=False)
 
+    def __str__(self):
+        return str(self.fk_client)
+
 class MinimumCommand(models.Model):
     amount = models.PositiveIntegerField()
 
+    def __str__(self):
+        return str(self.amount)
+
 class MessageToClient(models.Model):
     message = models.TextField()
+
+    def __str__(self):
+        return str(self.message)
