@@ -255,6 +255,9 @@ class Order(models.Model):
     historic_status = models.ManyToManyField(CommandStatus, through='Historic')
     variety = models.ManyToManyField(Variety, through='OrderDetail')
 
+    def __str__(self):
+        return str("{} - {}".format(self.fk_client, self.number))
+
     class Meta:
         verbose_name = 'Commande'
         verbose_name_plural = 'Commandes'
@@ -263,6 +266,9 @@ class OrderDetail(models.Model):
     fk_order = models.ForeignKey(Order, on_delete=models.CASCADE)
     fk_variety = models.ForeignKey(Variety, on_delete=models.CASCADE)
     quantity = models.IntegerField()
+
+    def __str__(self):
+        return str(self.fk_order)
 
     class Meta:
         constraints= [
@@ -277,6 +283,9 @@ class Historic(models.Model):
     fk_order = models.ForeignKey(Order, on_delete=models.CASCADE)
     fk_command_status = models.ForeignKey(CommandStatus, on_delete=models.CASCADE)
     date = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return str("{} - {} - {}".format(self.fk_order, self.fk_command_status, self.date))
 
     class Meta:
         constraints= [

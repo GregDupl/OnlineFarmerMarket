@@ -52,6 +52,10 @@ class MinimumCommandAdmin(admin.ModelAdmin):
     def has_add_permission(self, request, obj=None):
         return False
 
+class OrderDetailAdmin(admin.ModelAdmin):
+    list_display = ('fk_order','fk_variety','quantity')
+    list_filter = ('fk_order',)
+
 admin.site.register(Adress, AdressAdmin)
 admin.site.register(Variety, VarietyAdmin)
 admin.site.register(Product, ProductAdmin)
@@ -71,3 +75,5 @@ admin.site.register(Client, ClientAdmin)
 admin.site.register(MinimumCommand,MinimumCommandAdmin)
 admin.site.register(MessageToClient)
 admin.site.register(ClientReadyToCommand)
+admin.site.register(OrderDetail, OrderDetailAdmin)
+admin.site.register(Historic)
