@@ -33,11 +33,11 @@
         </div>
       </div>
     </nav>
-    <!--
-    <div class="adminmessage" style="background-color:#5a5e63">
-      <p class="py-1 px-3" style="color:white"> Bonjour, à partir du bla bla bla nous serons bla bla </p>
+    {%if messageadmin%}
+    <div id="adminmessage">
+      <p class="py-1 px-3"> {{messageadmin}} </p>
     </div>
-  -->
+    {%endif%}
   </div>
 
 

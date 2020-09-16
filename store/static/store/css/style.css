@@ -16,6 +16,7 @@
 body{
   background-color: #F5F5F5;
   font-family: "josefinRegular";
+  padding-top: 1em;
 }
 
 header {
@@ -208,4 +209,10 @@ h5{
   font-family: "josefinLight";
   opacity: 1;
   font-size: 1em;
+}
+
+#adminmessage{
+  background-color : #5a5e63;
+  color : white;
+  font-size: 0.9em;
 }
