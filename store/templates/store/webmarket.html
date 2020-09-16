@@ -34,6 +34,7 @@
                   data-unity="{{elt.fk_unity.type}}"
                   data-id="{{elt.id}}"
                   data-stock="{{elt.stock}}"
+                  data-img="{{elt.image.url}}"
                   {%if elt.quantity%}
                   data-cart = "{{elt.quantity}}"
                   {%endif%}
@@ -86,7 +87,7 @@
       <div class="modal-body">
         <div class="row h-100">
           <div class="col-lg-5 my-auto text-center my-3">
-            <img src="{% static 'store/img/tomato.jpg' %}" alt="" class="img-fluid rounded">
+            <img src="" alt="" class="img-fluid rounded">
           </div>
           <div class="offset-lg-1 col-lg-6 my-auto">
             <div class="row">

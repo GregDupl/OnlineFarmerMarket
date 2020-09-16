@@ -25,6 +25,9 @@ $('#detailProduct').on('show.bs.modal', function (event) {
   modal.find('.price').text(
     product.data('price') + "€ / " + product.data('unity')
   )
+
+  modal.find('img').attr("src", product.data('img'))
+
   input = modal.find('input')
   input.parents(':eq(1)').attr("data-id", product.data('id'))
   input.attr("max", product.data('stock'))
