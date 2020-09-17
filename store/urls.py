@@ -17,4 +17,5 @@ urlpatterns = [
     path('contact', views.email, name="contact"),
     path('reservation', views.reservation, name="reservation"),
     path('commander', views.command, name="command"),
+    path('valid', views.validate_command, name="valid"),
 ]

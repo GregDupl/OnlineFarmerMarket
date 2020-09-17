@@ -564,3 +564,33 @@ $("#choicecollect").click(function(){
     }
   });
 });
+
+// ****** BUTTON ORDER ******
+$("#formvalidation").submit(function(event) {
+    event.preventDefault();
+    $.ajax({
+      type:"POST",
+      headers:{'X-CSRFToken': $('[name=csrfmiddlewaretoken]').val()},
+      url:$(this).attr('action'),
+      data : $(this).serialize(),
+      success:function(context){
+        if (context.response == "success") {
+          location.assign(context.url)
+        }
+        else if (context.response == "expire") {
+          location.assign(context.url)
+        }
+        else if (context.response == "noLocker") {
+          $("#first").prop("selected",true);
+          $("#choicecollect option[value=clickcollect]").prop("disabled",true);
+          $(".optioncollect").hide()
+          $("#Ajaxinfo").text(context.message);
+        }
+        else if (context.response == "Error") {
+          $("#Ajaxinfo").text(context.message);
+        }
+      },
+      dataType : "json"
+    });
+
+});
