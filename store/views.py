@@ -230,7 +230,6 @@ def login_form(request):
 def profil(request):
     before(request)
     client = Client.objects.get(user=request.user)
-
     if request.method == 'GET':
         order = Order.objects.filter(fk_client=client)
 
@@ -389,7 +388,7 @@ def command(request):
 
         places = DirectWithdrawal.objects.all()
         locker = Locker.objects.filter(disponibility=True)
-        restaurant = TimeSlot.objects.filter(fk_command_type__type = "delivery")
+        restaurant = DeliverySlots.objects.all()
 
         locker_location = CollectLocation.objects.filter(fk_command_type__type = "locker")
         for location in locker_location:
@@ -410,3 +409,103 @@ def command(request):
 
     else:
         return redirect('store:index') # avoid access from adress bar
+
+def validate_command(request):
+    cible = ""
+    message=""
+    if request.method == "POST" : # good request origin
+        client = Client.objects.get(user=request.user)
+        cart = Cart.objects.filter(fk_client=client)
+        client_in_list = ClientReadyToCommand.objects.filter(fk_client=client)
+
+        if not client_in_list:
+            for obj in cart:
+                if obj.quantity > obj.fk_variety.stock:
+                    if obj.fk_variety.stock == 0:
+                        obj.delete()
+                    else:
+                        obj.quantity=obj.fk_variety.stock
+                        obj.save()
+            cible = reverse("store:cart")
+            context = {
+            "url" : cible,
+            "response" : "expire"
+            }
+
+            return JsonResponse(context)
+
+        try:
+            client_ready = ClientReadyToCommand.objects.get(fk_client=client)
+            client_ready.block = True
+            client_ready.save()
+
+            with transaction.atomic():
+
+                # !!!! PROCESS TO PAIEMENT !!!!
+
+
+                choice = request.POST['choice']
+                if choice == "withdrawal":
+                    option = request.POST['option_withdrawal']
+                    order = Order.objects.create(fk_client = client,
+                    fk_direct_withdrawal = DirectWithdrawal.objects.get(pk=option)
+                    )
+                elif choice == "clickcollect":
+                    option = request.POST['option_click']
+                    locker_location = CollectLocation.objects.get(pk=option)
+                    locker_available = Locker.objects.filter(fk_collect_location=locker_location, disponibility=True)
+                    assert len(locker_available) > 0
+
+                    locker = locker_available.first()
+                    locker.disponibility = False
+                    locker.save()
+
+                    order = Order.objects.create(fk_client = client,fk_locker = locker
+                    )
+                else :
+                    instructions = request.POST["instructions"]
+                    delivery = Delivery.objects.create(instructions = instructions,
+                    fk_delivery_slot=choice)
+
+                    order = Order.objects.create(fk_client = client,
+                    fk_delivery = delivery)
+
+                #hstioric
+                OrderHistoric.objects.create(fk_order = order)
+
+                #order details
+                for elt in cart:
+                    OrderDetail.objects.create(
+                    fk_order=order,fk_variety=elt.fk_variety,
+                    quantity=elt.quantity)
+
+
+                response = "success"
+                cible = reverse("store:account")
+                cart.delete()
+                client_ready.delete()
+
+
+        except AssertionError:
+            response = "noLocker"
+            message="Désolé, il n'y a plus aucun casier disponible !"
+            client_ready.block = False
+            client_ready.save()
+
+        except Exception:
+            raise
+            response = "Error"
+            message = "Désolé, une erreur s'est produite"
+            client_ready.block = False
+            client_ready.save()
+
+        context = {
+        "url" : cible,
+        "message" : message,
+        "response" : response
+        }
+
+        return JsonResponse(context)
+
+    else :
+        return redirect("store:index")
