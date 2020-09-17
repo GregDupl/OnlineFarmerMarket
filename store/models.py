@@ -248,7 +248,7 @@ class Order(models.Model):
     variety = models.ManyToManyField(Variety, through='OrderDetail')
 
     def __str__(self):
-        return str("{} - {}".format(self.fk_client, self.number))
+        return str("{} - {}".format(self.fk_client, self.pk))
 
     class Meta:
         verbose_name = 'Commande'
@@ -259,6 +259,9 @@ class OrderHistoric(models.Model):
     date_creation = models.DateField(auto_now_add=True)
     date_end = models.DateField(null=True)
     date_cancellation = models.DateField(null=True)
+
+    def __str__(self):
+        return str("{} - {}".format(self.fk_order.fk_client, self.date_creation))
 
 
 class OrderDetail(models.Model):
