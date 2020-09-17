@@ -15,24 +15,29 @@
     <div class="row h-100">
 
       <div class="col-md-5">
+        <form class="" action="{%url 'store:valid'%}" method="post" id="formvalidation">
+          {%csrf_token%}
+
         <div class="py-4 px-4 border rounded" style="background-color:white">
           <h5>Email</h5>
           <div class="input-group mb-3">
             <div class="input-group-prepend">
               <span class="input-group-text" id="basic-addon1">@</span>
             </div>
-            <input type="text" class="form-control" placeholder="Username" value="{{request.user.username}}">
+            <input type="text" class="form-control" placeholder="Username" value="{{request.user.username}}" name="username" required>
           </div>
         </div>
 
-        <div class="mt-2 py-4 px-4 border rounded" style="background-color:white">
+        <div class="mt-2 py-4 px-4 border rounded" style="background-color:white" id="collect_space">
+          <div class="" id="collect_choices">
+
           <h5>Choix de collecte</h5>
           <div class="input-group mb-3">
-            <select class="custom-select" id="choicecollect">
+            <select class="custom-select" id="choicecollect" name="choice" required>
               <option value="" id="first" selected disabled hidden>choisir...</option>
               <option value="withdrawal">Retrait en direct</option>
               <option value="clickcollect" {%if not locker%}disabled{%endif%}>Retrait en click&collect</option>
-              {%if client_type == "particulier"%}
+              {%if client_type != "restaurateur"%}
               <option value="delivery">Livraison</option>
               {%endif%}
             </select>
@@ -40,10 +45,15 @@
 
         <div class="optioncollect" style="display:none" id="withdrawal">
           <div class="input-group mb-3">
-          <select class="custom-select">
+          <select class="custom-select" name="option_withdrawal">
               {%for elt in directwithdrawal%}
               {%if elt.max_command > 0%}
-              <option value="{{elt.fk_collect_location.name}}">{{elt.fk_time_slot.fk_day.name|capfirst}} - {{elt.fk_time_slot.start_time|date:"H:i"}} à {{elt.fk_time_slot.end_time|date:"H:i"}} - {{elt.fk_collect_location.name|capfirst}}</option>
+              <option value="{{elt.pk}}">
+                {{elt.fk_time_slot.fk_day.name|capfirst}} -
+                {{elt.fk_time_slot.start_time|date:"H:i"}} à
+                {{elt.fk_time_slot.end_time|date:"H:i"}} -
+                {{elt.fk_collect_location.name|capfirst}}
+              </option>
               {%endif%}
               {%endfor%}
           </select>
@@ -52,47 +62,63 @@
 
         <div class="optioncollect" style="display:none" id="clickcollect">
           <div class="input-group mb-3">
-          <select class="custom-select">
+          <select class="custom-select" name="option_click">
               {%for elt in locker%}
-              <option value="{{elt.fk_collect_location.name}}">{{elt.name}}</option>
+              <option value="{{elt.pk}}">{{elt.name}}</option>
               {%endfor%}
           </select>
           </div>
         </div>
-        <div class="" id="Ajaxinfo"></div>
+
+        <div class="optioncollect" style="display:none" id="delivery">
+          <div class="input-group mb-3">
+          <select class="custom-select" name="option_delivery">
+              {%for elt in delivery%}
+              <option value="{{elt.pk}}">
+                {{elt.delivery_area}} -
+                {{elt.fk_time_slot.fk_day.name|capfirst}} -
+                {{elt.fk_time_slot.start_time|date:"H:i"}} à
+                {{elt.fk_time_slot.end_time|date:"H:i"}}
+              </option>
+              {%endfor%}
+          </select>
+          </div>
+        </div>
+        </div>
         </div>
 
         <div class="mt-2 mb-2 py-4 px-4 border rounded" style="background-color:white">
-          <h5>Informations de paiment</h5>
+          <h5>Informations de paiement</h5>
           <div class="input-group mb-3">
             <div class="input-group-prepend">
               <span class="input-group-text" id="card_name">Nom</span>
             </div>
-            <input type="text" class="form-control">
+            <input type="text" name="cardName" class="form-control" required>
           </div>
 
           <div class="input-group mb-3">
             <div class="input-group-prepend">
               <span class="input-group-text" id="card_name">N° de carte</span>
             </div>
-            <input type="text" class="form-control" placeholder="1111-2222-3333-4444">
+            <input type="text" name="cardNumber" class="form-control" placeholder="1111-2222-3333-4444"required>
           </div>
 
           <div class="input-group mb-3">
             <div class="input-group-prepend">
               <span class="input-group-text" id="">expiration</span>
             </div>
-            <input type="text" class="form-control">
-            <input type="text" class="form-control">
+            <input type="text" name="month" class="form-control" required>
+            <input type="text" name="year" class="form-control" required>
           </div>
 
           <div class="input-group mb-3">
             <div class="input-group-prepend">
               <span class="input-group-text" id="card_name">CVV</span>
             </div>
-            <input type="text" class="form-control" placeholder="352">
+            <input type="text" name="ccv" class="form-control" placeholder="352" form="formvalidation" required>
           </div>
         </div>
+        </form>
       </div>
 
       <div class="col-md-7">
@@ -125,7 +151,8 @@
               </tr>
             </tbody>
           </table>
-          <button class="btn btn-info" type="button" name="button">Commander</button>
+          <button class="btn btn-info" type="submit" name="button" form="formvalidation" id="commander">Commander</button>
+          <div class="mt-3" id="Ajaxinfo"> </div>
         </div>
       </div>
     </div>
