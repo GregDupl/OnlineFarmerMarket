@@ -12,6 +12,7 @@
         <div class="py-4 px-5 mt-5 border rounded" style="background-color:white">
           <h5>MON PANIER</h5>
           <div class="" style="color:red"> {{message}} </div>
+          {%if cart%}
         <table class="table mt-4" data-url="{%url 'store:cart'%}">
           <thead class="">
             <tr>
@@ -42,7 +43,10 @@
             </tr>
           </tbody>
         </table>
-        </div>
+        {%else%}
+        <p class="my-5">Vous n'avez aucun produit dans votre panier pour l'instant. </p>
+        {%endif%}
+      </div>
         <div class="row my-5">
           <div class="col-6 text-center">
             <a href="{%url 'store:webmarket'%}">
