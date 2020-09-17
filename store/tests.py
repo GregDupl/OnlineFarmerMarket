@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.test import TestCase, Client as C
 from store.management.commands.create_data import *
+import datetime
 
 def fake_dataset():
     u = User.objects.create_user(username='fake@mail.com', password='password', first_name='name')
@@ -17,7 +18,7 @@ def fake_dataset():
     fake_unity = Unity.objects.create(type="fake_type")
     fake_category = Category.objects.create(name="fake_category")
     fake_product = Product.objects.create(name="fake_product", fk_category=fake_category)
-    fake_variety = Variety.objects.create(name="fake_name",price=1,stock=10,fk_unity=fake_unity,fk_product=fake_product)
+    fake_variety = Variety.objects.create(name="fake_name",price=1,stock=20,fk_unity=fake_unity,fk_product=fake_product)
     return fake_variety, fake_client
 
 # Create your tests here.
@@ -242,11 +243,33 @@ class CommandTestCase(TestCase):
 
 class ReservationTestCase(TestCase):
     def test_reservation(self):
-            fake_variety, fake_client = fake_dataset()
-            c = C()
-            c.login(username='fake@mail.com', password='password')
-            fake_cart = Cart.objects.create(fk_client = fake_client, fk_variety = fake_variety, quantity=15)
-            response = c.post(reverse("store:reservation"), {
-            "button":True
-            })
-            self.assertEqual(response.status_code, 200)
+        fake_variety, fake_client = fake_dataset()
+        c = C()
+        c.login(username='fake@mail.com', password='password')
+        fake_cart = Cart.objects.create(fk_client = fake_client, fk_variety = fake_variety, quantity=15)
+        response = c.post(reverse("store:reservation"), {
+        "button":True
+        })
+        self.assertEqual(response.status_code, 200)
+
+class CommandValidationTestCase(TestCase):
+    def test_validation_commande(self):
+        fake_variety, fake_client = fake_dataset()
+        c = C()
+        c.login(username='fake@mail.com', password='password')
+        fake_cart = Cart.objects.create(fk_client = fake_client, fk_variety = fake_variety, quantity=15)
+        ClientReadyToCommand.objects.create(fk_client=fake_client, validation_date=datetime.datetime.now())
+        fake_type = CommandType.objects.create(type="fake_type")
+        fake_day = Day.objects.create(name="lundi")
+        fake_time = TimeSlot.objects.create(fk_day=fake_day, start_time=datetime.time(8,30,00), end_time=datetime.time(11,30,00), fk_command_type=fake_type)
+        fake_collect = CollectLocation.objects.create(name="fake_name",fk_adress=Adress.objects.get(ville='city'), fk_command_type=fake_type)
+        fake_withdrawal = DirectWithdrawal.objects.create(fk_collect_location=fake_collect, fk_time_slot=fake_time)
+
+        initial = Order.objects.count()
+        response = c.post(reverse("store:valid"), {
+        "choice":"withdrawal",
+        "option_withdrawal":fake_withdrawal.pk,
+        })
+        new=Order.objects.count()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(new, initial+1)
