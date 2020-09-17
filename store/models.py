@@ -257,8 +257,8 @@ class Order(models.Model):
 class OrderHistoric(models.Model):
     fk_order = models.OneToOneField(Order, on_delete=models.CASCADE)
     date_creation = models.DateField(auto_now_add=True)
-    date_end = models.DateField(null=True)
-    date_cancellation = models.DateField(null=True)
+    date_end = models.DateField(blank=True, null=True)
+    date_cancellation = models.DateField(blank=True, null=True)
 
     def __str__(self):
         return str("{} - {}".format(self.fk_order.fk_client, self.date_creation))
