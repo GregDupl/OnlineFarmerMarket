@@ -123,7 +123,7 @@ section{
 
 footer{
   background-color: rgba(38,38,38,1);
-  height:30vh;
+  color:white;
 }
 
 
@@ -215,4 +215,23 @@ h5{
   background-color : #5a5e63;
   color : white;
   font-size: 0.9em;
+}
+
+.network{
+  color:white;
+  max-width : 1.5em;
+  height:auto;
+}
+#insta{
+  filter: invert(100%);
+}
+
+footer a {
+  color:white;
+  font-family: "josefinLight";
+}
+
+footer a:hover{
+  color: white;
+  text-decoration: none;
 }
