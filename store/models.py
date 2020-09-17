@@ -178,6 +178,10 @@ class DeliverySlots(models.Model):
     max_command = models.PositiveIntegerField()
     delivery_area = models.CharField(max_length=250)
 
+    def __str__(self):
+        title = "{} - {}".format(self.fk_time_slot, self.delivery_area)
+        return title
+
 
 class Delivery(models.Model):
     instruction = models.TextField()
