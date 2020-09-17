@@ -26,8 +26,10 @@
               <div class="col-md-4 my-3 product" data-category="{{elt.fk_product.fk_category.name}}">
                 <div class="">
                   <div class="row img_product"
+                  {%if elt.stock%}
                   data-toggle="modal"
                   data-target="#detailProduct"
+                  {%endif%}
                   data-price="{{elt.price}}"
                   data-product="{{elt.fk_product.name}}"
                   data-variety="{{elt.name}}"

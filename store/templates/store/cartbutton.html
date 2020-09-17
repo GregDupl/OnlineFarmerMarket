@@ -1,5 +1,7 @@
 <div class="cart_interface" data-id={{id}}>
-
+{%if stock == 0%}
+<button type="submit" class="btn btn-info my-2 add" style="display:block" data-id={{id}} data-url="{%url 'store:adding_cart'%}" name="button" disabled>+</button>
+{%else%}
   {%if quantity%}
   <div class="modif" style="display:block" data-url="{%url 'store:cart'%}">
     {%if quantity == 1%}
@@ -14,6 +16,7 @@
     <button class=" btn btn-info changebutton plus"> + </button>
     {%endif%}
   </div>
+  <button type="submit" class="btn btn-info my-2 add" style="display:none" data-id={{id}} data-url="{%url 'store:adding_cart'%}" name="button">+</button>
 
   {%else%}
   <div class="modif" style="display:none" data-url="{%url 'store:cart'%}">
@@ -21,11 +24,9 @@
     <input class="quantity" type="text" inputmode="numeric" max={{stock}} value="1" min="1">
     <button class=" btn btn-info changebutton plus"> + </button>
   </div>
-  {%endif%}
-
-  {%if quantity%}
-  <button type="submit" class="btn btn-info my-2 add" style="display:none" data-id={{id}} data-url="{%url 'store:adding_cart'%}" name="button">+</button>
-  {%else%}
   <button type="submit" class="btn btn-info my-2 add" style="display:block" data-id={{id}} data-url="{%url 'store:adding_cart'%}" name="button">+</button>
   {%endif%}
+
+
+{%endif%}
 </div>
