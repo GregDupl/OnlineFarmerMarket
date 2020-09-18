@@ -596,3 +596,24 @@ $("#formvalidation").submit(function(event) {
     });
 
 });
+
+
+// ****** REMOVE ORDER ******
+$(".remove_order").click(function(event){
+  button = $(event.target);
+  order = button.attr("data-id");
+
+  $.ajax({
+    type:"POST",
+    headers:{'X-CSRFToken': $('[name=csrfmiddlewaretoken]').val()},
+    url:button.attr('data-url'),
+    data : {
+      "id" : order
+    },
+    success:function(context){
+      button.parents(".card").remove();
+      $("#message").text("Votre commande n° "+order+" a bien été annulée");
+    },
+    dataType : "json"
+  });
+})
