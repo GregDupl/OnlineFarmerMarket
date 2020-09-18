@@ -39,17 +39,13 @@ def update_cart_values(request, client):
 def before(request):
     if request.user.is_authenticated:
         client = Client.objects.get(user=request.user)
-        if ClientReadyToCommand.objects.filter(fk_client=client).exists():
-            to_delete = ClientReadyToCommand.objects.get(fk_client=client)
-            if to_delete.block == False:
-                try:
-                    to_delete.block = True
-                    to_delete.save()
-                    to_delete.delete()
-                    cart = UserCart(client)
-                    cart.unsave()
-                except DoesNotExist:
-                    pass
+        try:
+            ClientReadyToCommand.objects.get(fk_client=client).delete()
+            cart = UserCart(client)
+            cart.unsave()
+        except ClientReadyToCommand.DoesNotExist:
+            pass
+
 
 ##################
 
