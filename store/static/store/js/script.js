@@ -321,6 +321,8 @@ $(".add").click(function(event){
       modify_cart = $(cart_elt.find(".modif"))
       modify_cart.css('display', 'block')
       add_button.css('display','none')
+      modify_cart.find(".minus").text("del")
+      modify_cart.find(".minus").addClass("del")
 
       product_catalog = $(".img_product[data-id="+product+"]")
       product_catalog.attr('data-cart', quantity);
