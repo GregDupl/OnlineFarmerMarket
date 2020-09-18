@@ -27,6 +27,15 @@ def add_to_cart(request, client, variety, quantity):
         existing_record.quantity = quantity
         existing_record.save()
 
+def update_cart_values(request, client):
+    for obj in Cart.objects.filter(fk_client=client):
+        if obj.quantity > obj.fk_variety.stock:
+            if obj.fk_variety.stock == 0:
+                obj.delete()
+            else:
+                obj.quantity=obj.fk_variety.stock
+                obj.save()
+
 def before(request):
     if request.user.is_authenticated:
         client = Client.objects.get(user=request.user)
@@ -57,12 +66,7 @@ def webmarket(request):
     if request.user.is_authenticated:
         client = Client.objects.get(user=request.user)
 
-        for obj in Cart.objects.filter(fk_client=client):
-            if obj.fk_variety.stock == 0:
-                obj.delete()
-            elif obj.quantity > obj.fk_variety.stock:
-                obj.quantity = obj.fk_variety.stock
-                obj.save()
+        update_cart_values(request, client)
 
         cart = Cart.objects.filter(fk_client=client)
 
@@ -108,12 +112,7 @@ def cart(request):
     if request.method == 'GET':
         if request.user.is_authenticated :
             client = Client.objects.get(user=request.user)
-            for obj in Cart.objects.filter(fk_client=client):
-                if obj.fk_variety.stock == 0:
-                    obj.delete()
-                elif obj.quantity > obj.fk_variety.stock:
-                    obj.quantity = obj.fk_variety.stock
-                    obj.save()
+            update_cart_values(request, client)
 
             query = Cart.objects.filter(fk_client=client)
 
@@ -395,10 +394,8 @@ def reservation(request):
                     variety.save()
 
         except IntegrityError:
-            for obj in Cart.objects.filter(fk_client=client):
-                if obj.quantity > obj.fk_variety.stock:
-                    obj.quantity = obj.fk_variety.stock
-                    obj.save()
+            update_cart_values(request, client)
+
             message = "Votre panier a été modifié en fonction des stocks restants"
             response = 'confirm'
             url_cible = reverse('store:cart')
@@ -460,13 +457,7 @@ def validate_command(request):
         client_in_list = ClientReadyToCommand.objects.filter(fk_client=client)
 
         if not client_in_list:
-            for obj in cart:
-                if obj.quantity > obj.fk_variety.stock:
-                    if obj.fk_variety.stock == 0:
-                        obj.delete()
-                    else:
-                        obj.quantity=obj.fk_variety.stock
-                        obj.save()
+            update_cart_values(request, client)
             cible = reverse("store:cart")
             context = {
             "url" : cible,
