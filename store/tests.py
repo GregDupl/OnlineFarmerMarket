@@ -275,3 +275,38 @@ class CommandValidationTestCase(TestCase):
         new=Order.objects.count()
         self.assertEqual(response.status_code, 200)
         self.assertEqual(new, initial+1)
+
+
+class RemoveOrderTestCase(TestCase):
+    def test_remove_order(self):
+        fake_variety, fake_client = fake_dataset()
+        c = C()
+        c.login(username='fake@mail.com', password='password')
+        fake_type = CommandType.objects.create(type="fake_type")
+        fake_day = Day.objects.create(name="lundi")
+        fake_time = TimeSlot.objects.create(fk_day=fake_day, start_time=datetime.time(8,30,00), end_time=datetime.time(11,30,00), fk_command_type=fake_type)
+        fake_collect = CollectLocation.objects.create(name="fake_name",fk_adress=Adress.objects.get(ville='city'), fk_command_type=fake_type)
+        fake_withdrawal = DirectWithdrawal.objects.create(fk_collect_location=fake_collect, fk_time_slot=fake_time)
+
+        fake_order = Order.objects.create(fk_client = fake_client, fk_direct_withdrawal=fake_withdrawal)
+        detail = OrderDetail.objects.create(fk_order = fake_order, fk_variety=fake_variety, quantity=15)
+        historic = OrderHistoric.objects.create(fk_order=fake_order, date_creation=datetime.datetime.now())
+
+        initial_order = Order.objects.filter(fk_client=fake_client).count()
+        initial_detail = OrderDetail.objects.filter(fk_order=fake_order).count()
+        initial_historic = OrderHistoric.objects.filter(fk_order=fake_order).count()
+        initial_stock = fake_variety.stock
+
+        response = c.post(reverse("store:remove"),{
+        "id" : fake_order.pk
+        })
+
+        new_order = Order.objects.filter(fk_client=fake_client).count()
+        new_detail = OrderDetail.objects.filter(fk_order=fake_order).count()
+        new_historic = OrderHistoric.objects.filter(fk_order=fake_order).count()
+        new_stock = Variety.objects.get(name="fake_name").stock
+
+        self.assertEqual(new_order, initial_order-1)
+        self.assertEqual(new_detail, initial_detail-1)
+        self.assertEqual(new_historic, initial_historic-1)
+        self.assertEqual(new_stock, initial_stock+15)

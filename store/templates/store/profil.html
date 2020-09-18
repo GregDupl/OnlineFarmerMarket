@@ -9,9 +9,8 @@
         <div class="presentation">
           <h4>Mes commandes</h4>
 
-          {% if message %}
-          <div class="my-3" id="message"> {{message}}</div>
-          {%endif%}
+
+          <div class="my-3" id="message">{% if message %} {{message}} {%endif%}</div>
           <div class="row">
             <div class="col-12">
               <hr>
@@ -27,7 +26,7 @@
                         <button class="btn btn-link title_card" data-toggle="collapse" data-target="#collapse{{order.pk}}" aria-expanded="true" aria-controls="collapse{{order.pk}}">
                           Numéro {{order.fk_order.pk}} - validée le {{order.date_creation|date:"SHORT_DATE_FORMAT"}}
                         </button>
-                        <button class="btn btn-light btn-sm my-auto float-right" type="button" name="button">Annuler</button>
+                        <button class="btn btn-light btn-sm my-auto float-right remove_order" data-url="{%url 'store:remove'%}" data-id="{{order.fk_order.pk}}" type="button" name="button">Annuler</button>
                       </h5>
                     </div>
 
