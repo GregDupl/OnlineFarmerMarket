@@ -18,4 +18,5 @@ urlpatterns = [
     path('reservation', views.reservation, name="reservation"),
     path('commander', views.command, name="command"),
     path('valid', views.validate_command, name="valid"),
+    path('remove', views.remove_order, name="remove"),
 ]
