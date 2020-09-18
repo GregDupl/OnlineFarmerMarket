@@ -178,11 +178,11 @@ function update_total_cart() {
   };
   $("#total_cart").text(total_result.toFixed(2))
 
-  var min = $("#command").attr("data-min")
-  if (total_result < min) {
-    $("#command").prop("disabled", true)
+  var min = $(".command_button").attr("data-min")
+  if (total_result < parseFloat(min)) {
+    $(".command_button").prop("disabled", true)
   }else{
-    $("#command").prop("disabled", false)
+    $(".command_button").prop("disabled", false)
   }
 
 };

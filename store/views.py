@@ -130,9 +130,12 @@ def cart(request):
             product.total = product.quantity * product.fk_variety.price
             total_cart += product.total
 
+        minimum = MinimumCommand.objects.all().first().amount
+        
         context = {
         "cart" : query,
         "total" : total_cart,
+        "minimum" : minimum
         }
 
 
