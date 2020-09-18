@@ -43,12 +43,14 @@ class MarketplaceTestCase(TestCase):
 class CartTestCase(TestCase):
     def test_authenticated_get(self):
         fake_dataset()
+        MinimumCommand.objects.create(amount=15)
         c = C()
         c.login(username='fake@mail.com', password='password')
         response = c.get(reverse("store:cart"))
         self.assertEqual(response.status_code, 200)
 
     def test_anonymous_get(self):
+        MinimumCommand.objects.create(amount=15)
         c = C()
         response = c.get(reverse("store:cart"))
         self.assertEqual(response.status_code, 200)
