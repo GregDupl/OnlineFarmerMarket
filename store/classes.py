@@ -26,6 +26,19 @@ class CartSession(CartObject, Variety):
     def return_queryset(self, request):
             return self.objects
 
+    def update(self,request):
+        for obj in self.objects:
+            key = str(obj.fk_variety.pk)
+            if obj.fk_variety.stock == 0:
+                self.data.pop(key)
+                self.objects.remove(obj)
+
+            elif obj.quantity > obj.fk_variety.stock:
+                obj.quantity = obj.fk_variety.stock
+                self.data[key] = str(obj.quantity)
+
+        return self.data
+
     def to_cart_database(self, request, client, add):
         for object in self.objects:
             variety = object.fk_variety

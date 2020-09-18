@@ -56,6 +56,14 @@ def webmarket(request):
 
     if request.user.is_authenticated:
         client = Client.objects.get(user=request.user)
+
+        for obj in Cart.objects.filter(fk_client=client):
+            if obj.fk_variety.stock == 0:
+                obj.delete()
+            elif obj.quantity > obj.fk_variety.stock:
+                obj.quantity = obj.fk_variety.stock
+                obj.save()
+
         cart = Cart.objects.filter(fk_client=client)
 
     else:
@@ -63,6 +71,7 @@ def webmarket(request):
         check_cart_session(request)
         cart_session = CartSession(request.session.get('cart'))
         cart_session.create_queryset(request)
+        request.session['cart'] = cart_session.update(request)
         cart = cart_session.return_queryset(request)
 
     if cart is not None:
@@ -98,13 +107,22 @@ def cart(request):
 
     if request.method == 'GET':
         if request.user.is_authenticated :
-            query = Cart.objects.filter(fk_client=Client.objects.get(user=request.user))
+            client = Client.objects.get(user=request.user)
+            for obj in Cart.objects.filter(fk_client=client):
+                if obj.fk_variety.stock == 0:
+                    obj.delete()
+                elif obj.quantity > obj.fk_variety.stock:
+                    obj.quantity = obj.fk_variety.stock
+                    obj.save()
+
+            query = Cart.objects.filter(fk_client=client)
 
         else:
             # User is anonymous
             check_cart_session(request)
             cart_session = CartSession(request.session.get('cart'))
             cart_session.create_queryset(request)
+            request.session['cart'] = cart_session.update(request)
             query = cart_session.return_queryset(request)
 
         total_cart = 0
