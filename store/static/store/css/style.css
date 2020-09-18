@@ -169,7 +169,7 @@ h5{
 .out_of_stock{
   position: absolute;
   top:1em;
-  right: 0.1em;
+  left: 1em;
   color: white;
   background-color: rgba(38,38,38,1);
   opacity: 1;
