@@ -131,7 +131,7 @@ def cart(request):
             total_cart += product.total
 
         minimum = MinimumCommand.objects.all().first().amount
-        
+
         context = {
         "cart" : query,
         "total" : total_cart,
@@ -391,7 +391,6 @@ def reservation(request):
             with transaction.atomic():
                 for obj in cart :
                     variety = obj.fk_variety
-                    print(variety)
                     variety.stock = F('stock') - obj.quantity
                     variety.save()
 
@@ -551,3 +550,30 @@ def validate_command(request):
 
     else :
         return redirect("store:index")
+
+
+def remove_order(request):
+    if request.method == "POST":
+        order_ref = request.POST["id"]
+        order = Order.objects.get(pk=order_ref)
+        response=""
+        with transaction.atomic():
+            # !!!! PROCESS TO THE REFUND !!!!
+
+            detail = OrderDetail.objects.filter(fk_order=order)
+            for obj in detail:
+                variety = obj.fk_variety
+                variety.stock = F('stock') + obj.quantity
+                variety.save()
+
+            order.delete()
+
+            response = "Commande supprimée"
+
+        context = {
+        "response" : response,
+        }
+        return JsonResponse(context)
+
+    else:
+        return redirect('store:account')
