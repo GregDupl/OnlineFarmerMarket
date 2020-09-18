@@ -6,17 +6,13 @@ import datetime
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        ready_list = ClientReadyToCommand.objects.all()
-        for obj_ready in ready_list :
-            if obj_ready.block is False:
-                obj_ready.block = True
-                client = Client.objects.get(pk=obj_ready.fk_client.pk)
-
-                delta = datetime.datetime.now() - obj_ready.validation_date
-
-                if delta.seconds > 120 :
+        for obj_ready in ClientReadyToCommand.objects.filter(block=False) :
+            client = obj_ready.fk_client
+            delta = datetime.datetime.now() - obj_ready.validation_date
+            if delta.seconds > 120 :
+                try:
                     # remove from ClientReadyToCommand
-                    obj_ready.delete()
+                    ClientReadyToCommand.objects.get(fk_client=client, block=False).delete()
 
                     # adding quantities in variety stock
                     cart = Cart.objects.filter(fk_client = client)
@@ -24,5 +20,6 @@ class Command(BaseCommand):
                         variety = obj_cart.fk_variety
                         variety.stock = F('stock') + obj_cart.quantity
                         variety.save()
-                else:
-                    obj_ready.block = False
+
+                except ClientReadyToCommand.DoesNotExist:
+                    pass
