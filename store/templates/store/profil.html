@@ -5,149 +5,254 @@
 <section class="my-3">
   <div class="container">
     <div class="row h-100 pb-5 mb-5">
-
-      <div class="col-md-7">
+      <div class="col-md-6">
         <div class="presentation">
           <h4>Mes commandes</h4>
-          <hr>
+
+          {% if message %}
+          <div class="my-3" id="message"> {{message}}</div>
+          {%endif%}
           <div class="row">
             <div class="col-12">
-              <h5>Commandes en cours</h5>
-              <p>Numero de commande / detail / annulation</p>
-            </div>
-            <div class="col-12">
-              <h5>Commandes passées</h5>
-              <p>Numero de commande / detail</p>
+              <hr>
+              <h5>COMMANDES EN COURS</h5>
+              {%if actual_order%}
+              <div class="row my-3">
+                <div class="col-12" id="accordion1">
 
-            </div>
-          </div>
-        </div>
-      </div>
+                  {%for order in actual_order%}
+                  <div class="card">
+                    <div class="card-header" id="heading{{order.pk}}">
+                      <h5 class="mb-0">
+                        <button class="btn btn-link title_card" data-toggle="collapse" data-target="#collapse{{order.pk}}" aria-expanded="true" aria-controls="collapse{{order.pk}}">
+                          Numéro {{order.fk_order.pk}} - validée le {{order.date_creation|date:"SHORT_DATE_FORMAT"}}
+                        </button>
+                        <button class="btn btn-light btn-sm my-auto float-right" type="button" name="button">Annuler</button>
+                      </h5>
+                    </div>
 
-      <div class="offset-md-1 col-md-4">
-        <div class="presentation">
-          <div class="row">
-            <div class="col-9">
-              <h4>Mes infos</h4>
-            </div>
-            <div class="col-3">
-              <button class="btn btn-link btn-sm" id="update_infos_button" type="button" name="button">Modifier</button>
-            </div>
+                    <div id="collapse{{order.pk}}" class="collapse" aria-labelledby="heading{{order.pk}}" data-parent="#accordion1">
+                      <div class="card-body">
+                        <div class="mb-4">
+                          {%if order.fk_order.fk_direct_withdrawal%}
+                          En retrait direct - {{order.fk_order.fk_direct_withdrawal.fk_collect_location.name}}
+                          {%elif order.fk_order.fk_locker%}
+                          En click&collect - {{order.fk_order.fk_locker.fk_collect_location.name}}  - casier n° {{order.fk_order.fk_locker.number}}
+                          {%else%}
+                          Livraison - {{order.fk_order.fk_delivery.fk_delivery_slot.fk_day.name}}
+                          {%endif%}
+                        </div>
+                        {%for elt in order.queryset_variety%}
+                        <div class="row my-1 align-items-center">
+                          <div class="col-3">
+                            <img class="rounded mr-3" src="{{elt.fk_variety.image.url}}" alt="">
+                          </div>
+                          <div class="col-6 text-left">
+                              {{elt.fk_variety.fk_product.name|capfirst}} - {{elt.fk_variety}}
+                          </div>
+                          <div class="col-3 text-right">
+                            qté : {{elt.quantity}}
+                          </div>
+                        </div>
+                        {%endfor%}
+                      </div>
+                    </div>
+                  </div>
+                  {%endfor%}
 
-          </div>
-          <hr>
-          <div id="update_message" class="py-3" style="color:red"></div>
-          <!-- DISPLAY INFOS PROFIL -->
-          <div class="" id="infosprofil" style="display:block">
-            <p>Nom : {{client.user.first_name|capfirst}}</p>
-            <p>email : {{email}} </p>
-            <p>adresse :
-              {{client.fk_adress.numero}},
-              {{client.fk_adress.rue}}
-              {%if client.fk_adress.complement%}
-              {{client.fk_adress.complement}}
+                </div>
+              </div>
+              {%else%}
+              <div class="row">
+                <div class="col-12">
+                  <p>Vous n'avez aucune commande en cours</p>
+                </div>
+              </div>
               {%endif%}
-              {{client.fk_adress.code_postal}}
-              {{client.fk_adress.ville|capfirst}}</p>
-          </div>
-          <!-- FORM TO UPDATE INFOS PROFIL -->
-          <form class="" id="update_infos_form" action="{%url 'store:account'%}" method="post" style="display:none" >
-            <div class="message"></div>
-            <div class="form-group row">
-              <div class="col-sm-12">
-                <input type="email" class="form-control" name="mail" value="{{email}}" required>
-              </div>
             </div>
-              <div class="form-group row">
-                <div class="col-sm-12">
-                  <input type="text" class="form-control req" name="name" value="{{client.user.first_name|capfirst}}" required>
+
+            {%if past_order%}
+            <div class="col-12">
+              <hr>
+              <h5>COMMANDES PASSEES</h5>
+              <div class="row my-3">
+              {%for order in past_order%}
+                <div class="col-12">
+                  <p class="my-auto"></p>
                 </div>
-              </div>
+              {%endfor%}
+              <div class="col-12" id="accordion2">
+                {%for order in past_order%}
+                <div class="card">
+                  <div class="card-header" id="heading{{order.pk}}">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link title_card" data-toggle="collapse" data-target="#collapse{{order.pk}}" aria-expanded="true" aria-controls="collapse{{order.pk}}">
+                        N° {{order.fk_order.pk}} - terminée le {{order.date_end|date:"SHORT_DATE_FORMAT"}}
+                      </button>
+                    </h5>
+                  </div>
 
-              <div class="form-group row">
-                <div class="col-sm-12">
-                  {%if client.phone%}
-                  <input type="tel" class="form-control" name="phone" value="{{client.phone}}" minlength=10>
-                  {%else%}
-                  <input type="tel" class="form-control" name="phone" placeholder="0606060606" minlength=10>
-                  {%endif%}
-
+                  <div id="collapse{{order.pk}}" class="collapse" aria-labelledby="heading{{order.pk}}" data-parent="#accordion2">
+                    <div class="card-body">
+                      {%for elt in order.queryset_variety%}
+                      <div class="row my-1 align-items-center">
+                        <div class="col-3">
+                          <img class="rounded mr-3" src="{{elt.fk_variety.image.url}}" alt="">
+                        </div>
+                        <div class="col-6 text-left">
+                            {{elt.fk_variety.fk_product.name|capfirst}} - {{elt.fk_variety}}
+                        </div>
+                        <div class="col-3 text-right">
+                          qté : {{elt.quantity}}
+                        </div>
+                      </div>
+                      {%endfor%}
+                    </div>
+                  </div>
                 </div>
-              </div>
+                {%endfor%}
 
-            <div class="form-group row">
-              <div class="col-sm-12">
-                <input type="number" class="form-control my-2 req" name="number" value="{{client.fk_adress.numero}}" required>
-                <input type="text" class="form-control my-2 req" name="rue" value="{{client.fk_adress.rue}}" required>
-                {%if client.fk_adress.complement%}
-                <input type="text" class="form-control my-2" name="cplt" value="{{client.fk_adress.complement}}">
-                {%else%}
-                <input type="text" class="form-control my-2" name="cplt" placeholder="Complément d'adresse">
-                {%endif%}
-                <input type="text" class="form-control my-2 req" name="code_postal" value="{{client.fk_adress.code_postal}}" required>
-                <input type="text" class="form-control my-2 req" name="ville" value="{{client.fk_adress.ville|capfirst}}" required>
               </div>
             </div>
-
-            <div class="form-group row">
-              <div class="col-9">
-                <input type="password" class="form-control" name="password" placeholder="Entrez votre mot de passe" required>
-              </div>
-              <div class="col-3 pl-0">
-                <button class="btn btn-info btn-sm btn-block py-2" type="submit" name="button">Envoyer</button>
-              </div>
             </div>
-          </form>
+            {%endif%}
 
-          <!-- FORM TO UPDATE PASSWORD -->
-          <form class="" id="update_password_form" action="" method="post" style="display:none">
-            <div class="message"></div>
-            <div class="form-group row">
-              <div class="col-sm-12">
-                <input type="password" class="form-control py-2" name="newpassword" placeholder="Choisir un nouveau mot de passe" required>
-              </div>
-            </div>
-
-            <div class="form-group row">
-              <div class="col-sm-12">
-                <input type="password" class="form-control" name="confirmpassword" placeholder="Confirmer votre nouveau mot de passe" required>
-              </div>
-            </div>
-
-            <div class="form-group row">
-              <div class="col-9">
-                <input type="password" class="form-control py-2" name="actualpassword" placeholder="Mot de passe actuel" required>
-              </div>
-              <div class="col-3 pl-0">
-                <button class="btn btn-info btn-sm btn-block py-2" type="submit" name="button">Envoyer</button>
-              </div>
-            </div>
-
-          </form>
-
-          <div class="mt-5">
-            <button class="btn btn-link btn-sm float-right" id="update_password_button" type="button" name="button">Changer de mot de passe</button>
           </div>
         </div>
       </div>
+
+      <div class="offset-md-1 col-md-5">
+        <div class="row">
+          <div class="presentation col-12">
+            <div class="row">
+              <div class="col-9">
+                <h4>Mes infos</h4>
+              </div>
+              <div class="col-3">
+                <button class="btn btn-link btn-sm" id="update_infos_button" type="button" name="button">Modifier</button>
+              </div>
+
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-12">
+                <div id="update_message" class="py-3" style="color:red"></div>
+                <!-- DISPLAY INFOS PROFIL -->
+                <div class="" id="infosprofil" style="display:block">
+                  <p>Nom : {{client.user.first_name|capfirst}}</p>
+                  <p>email : {{email}} </p>
+                  <p>adresse :
+                    {{client.fk_adress.numero}},
+                    {{client.fk_adress.rue}}
+                    {%if client.fk_adress.complement%}
+                    {{client.fk_adress.complement}}
+                    {%endif%}
+                    {{client.fk_adress.code_postal}}
+                    {{client.fk_adress.ville|capfirst}}</p>
+                </div>
+                <!-- FORM TO UPDATE INFOS PROFIL -->
+                <form class="" id="update_infos_form" action="{%url 'store:account'%}" method="post" style="display:none" >
+                  <div class="message"></div>
+                  <div class="form-group row">
+                    <div class="col-sm-12">
+                      <input type="email" class="form-control" name="mail" value="{{email}}" required>
+                    </div>
+                  </div>
+                    <div class="form-group row">
+                      <div class="col-sm-12">
+                        <input type="text" class="form-control req" name="name" value="{{client.user.first_name|capfirst}}" required>
+                      </div>
+                    </div>
+
+                    <div class="form-group row">
+                      <div class="col-sm-12">
+                        {%if client.phone%}
+                        <input type="tel" class="form-control" name="phone" value="{{client.phone}}" minlength=10>
+                        {%else%}
+                        <input type="tel" class="form-control" name="phone" placeholder="0606060606" minlength=10>
+                        {%endif%}
+
+                      </div>
+                    </div>
+
+                  <div class="form-group row">
+                    <div class="col-sm-12">
+                      <input type="number" class="form-control my-2 req" name="number" value="{{client.fk_adress.numero}}" required>
+                      <input type="text" class="form-control my-2 req" name="rue" value="{{client.fk_adress.rue}}" required>
+                      {%if client.fk_adress.complement%}
+                      <input type="text" class="form-control my-2" name="cplt" value="{{client.fk_adress.complement}}">
+                      {%else%}
+                      <input type="text" class="form-control my-2" name="cplt" placeholder="Complément d'adresse">
+                      {%endif%}
+                      <input type="text" class="form-control my-2 req" name="code_postal" value="{{client.fk_adress.code_postal}}" required>
+                      <input type="text" class="form-control my-2 req" name="ville" value="{{client.fk_adress.ville|capfirst}}" required>
+                    </div>
+                  </div>
+
+                  <div class="form-group row">
+                    <div class="col-9">
+                      <input type="password" class="form-control" name="password" placeholder="Entrez votre mot de passe" required>
+                    </div>
+                    <div class="col-3 pl-0">
+                      <button class="btn btn-info btn-sm btn-block py-2" type="submit" name="button">Envoyer</button>
+                    </div>
+                  </div>
+                </form>
+
+                <!-- FORM TO UPDATE PASSWORD -->
+                <form class="" id="update_password_form" action="" method="post" style="display:none">
+                  <div class="message"></div>
+                  <div class="form-group row">
+                    <div class="col-sm-12">
+                      <input type="password" class="form-control py-2" name="newpassword" placeholder="Choisir un nouveau mot de passe" required>
+                    </div>
+                  </div>
+
+                  <div class="form-group row">
+                    <div class="col-sm-12">
+                      <input type="password" class="form-control" name="confirmpassword" placeholder="Confirmer votre nouveau mot de passe" required>
+                    </div>
+                  </div>
+
+                  <div class="form-group row">
+                    <div class="col-9">
+                      <input type="password" class="form-control py-2" name="actualpassword" placeholder="Mot de passe actuel" required>
+                    </div>
+                    <div class="col-3 pl-0">
+                      <button class="btn btn-info btn-sm btn-block py-2" type="submit" name="button">Envoyer</button>
+                    </div>
+                  </div>
+
+                </form>
+
+                <div class="mt-5">
+                  <button class="btn btn-link btn-sm float-right" id="update_password_button" type="button" name="button">Changer de mot de passe</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-5 pb-1">
+          <div class="offset-md-5 col-md-7">
+            <a class="btn btn-info btn-sm btn-block" id="logoutbutton" href="{%url 'store:logout'%}">Se déconnecter</a>
+          </div>
+        </div>
+        <hr>
+        <div class="row pt-1">
+          <div class="offset-5 col-md-7">
+            <a class="btn btn-link btn-sm btn-block text-right" style="color : red" id="deletebutton" href="#" style="display:block">Supprimer mon compte</a>
+          <div class="alert alert-danger alert-dismissible fade show text-right" id="alertdelete" role="alert" style="display:none">
+            <strong> Êtes-vous sûr ? </strong> Cette action est définitive !
+            <a href="{%url 'store:delete_account'%}"><button class="btn btn-danger ml-1" type="button" name="button">oui</button></a>
+            <button class="btn btn-secondary ml-1" id="abandon" type="button" name="button"> non </button>
+          </div>
+        </div>
+        </div>
+
+      </div>
     </div>
 
-    <div class="row mt-5 pb-1">
-      <div class="offset-md-9 col-md-3">
-        <a class="btn btn-info btn-sm btn-block" id="logoutbutton" href="{%url 'store:logout'%}">Se déconnecter</a>
-      </div>
-    </div>
-    <hr>
-    <div class="row pt-1">
-      <div class="offset-5 col-md-7">
-        <a class="btn btn-link btn-sm btn-block text-right" style="color : red" id="deletebutton" href="#" style="display:block">Supprimer mon compte</a>
-      <div class="alert alert-danger alert-dismissible fade show text-right" id="alertdelete" role="alert" style="display:none">
-        <strong> Êtes-vous sûr ? </strong> Cette action est définitive !
-        <a href="{%url 'store:delete_account'%}"><button class="btn btn-danger ml-5" type="button" name="button">oui</button></a>
-        <button class="btn btn-secondary ml-5" id="abandon" type="button" name="button"> non </button>
-      </div>
-    </div>
-    </div>
+
   </div>
 </section>
 {%endblock%}

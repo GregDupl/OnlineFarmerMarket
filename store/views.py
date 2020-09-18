@@ -231,12 +231,33 @@ def profil(request):
     before(request)
     client = Client.objects.get(user=request.user)
     if request.method == 'GET':
+
         order = Order.objects.filter(fk_client=client)
+
+        actual_order = OrderHistoric.objects.filter(
+        fk_order__in = order,
+        date_end__isnull=True,
+        date_cancellation__isnull=True)
+
+        for elt in actual_order:
+            ref_order = elt.fk_order
+            elt.queryset_variety = OrderDetail.objects.filter(fk_order = ref_order)
+
+        past_order = OrderHistoric.objects.filter(
+        fk_order__in = order,
+        date_end__isnull=False,
+        date_cancellation__isnull=True)
+
+        for elt in past_order:
+            ref_order = elt.fk_order
+            elt.queryset_variety = OrderDetail.objects.filter(fk_order = ref_order)
+
 
         context = {
         "email" :request.user.get_username(),
         "client" : client,
-        "order" : order,
+        "actual_order": actual_order,
+        "past_order" : past_order
         }
 
         return render(request, 'store/profil.html', context)

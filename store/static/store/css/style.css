@@ -235,3 +235,31 @@ footer a:hover{
   color: white;
   text-decoration: none;
 }
+
+.card, .card-header{
+  background-color: #F5F5F5;
+  border: none;
+  font-size: 0.8em;
+}
+
+.card-header{
+  padding-left : 0px;
+}
+
+.card img{
+  max-width: 4em;
+  height: auto;
+  background-color: none;
+}
+.title_card{
+  color: rgba(38,38,38,1);
+  font-family: "josefinLight";
+}
+.title_card:hover{
+  text-decoration: none;
+  color: rgba(38,38,38,1);
+}
+
+.card-body{
+  background-color: rgba(250,250,250,0.3);
+}
