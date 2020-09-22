@@ -5,3 +5,4 @@ store/migrations/__pycache__
 marche_en_ligne/settings/__pycache__
 store/management/commands/__pycache__
 geckodriver.log
+.coverage
