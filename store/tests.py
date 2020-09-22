@@ -352,6 +352,11 @@ class RemoveOrderTestCase(TestCase):
         self.assertEqual(new_historic, initial_historic-1)
         self.assertEqual(new_stock, initial_stock+15)
 
+class NotFoundTestCase(TestCase):
+    def test_404(self):
+        c = C()
+        response = c.get('/unknownadress')
+        self.assertEqual(response.status_code, 404)
 
 #### FUNCTIONAL TEST
 
