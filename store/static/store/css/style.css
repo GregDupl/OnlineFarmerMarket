@@ -54,13 +54,14 @@ header .overlay {
   left: 0;
   height: 100%;
   width: 100%;
-  background-color: rgba(38,38,38,0.7);
+  background-color: rgba(38,38,38,0.6);
   z-index: 1;
 }
 
 #farm_name{
-  font-size: 4em;
+  font-size: 3em;
   font-family: "josefinBold";
+  margin-bottom: 0.5em;
 }
 
 .navbar{
