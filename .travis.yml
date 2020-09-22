@@ -9,7 +9,11 @@ services : postgresql
 env:
   jobs:
     - DJANGO_SETTINGS_MODULE=marche_en_ligne.settings.travis
+  global:
+    - MOZ_HEADLESS=1
 
+addons:
+  firefox: latest
 
 # command to run tests
 script: ./manage.py test store
