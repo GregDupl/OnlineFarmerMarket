@@ -190,7 +190,7 @@ function update_total_cart() {
 function update_cart(origin, value){
   subtotal = origin.parents("tr").find(".subtotal");
   price = origin.parents("tr").attr("data-price");
-  result = price * value;
+  result = parseFloat(price) * value;
   subtotal.text(result.toFixed(2));
   update_total_cart()
 };
@@ -544,9 +544,6 @@ $("#command").click(function(){
       'button' : true,
     },
     success:function(context){
-      if (context.response == 'confirm') {
-        alert(context.message)
-      }
       var cible = context.url
       location.assign(cible)
     },
