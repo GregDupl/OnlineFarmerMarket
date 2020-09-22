@@ -102,7 +102,8 @@ def marketplaces(request):
 
     return render(request,'store/marketplaces.html', context)
 
-def cart(request):
+@never_cache
+def cart(request, info='show'):
     before(request)
 
     if request.method == 'GET':
@@ -127,10 +128,18 @@ def cart(request):
 
         minimum = MinimumCommand.objects.all().first().amount
 
+        if info == "outofstock":
+            message = "Votre panier a été modifié en fonction des stocks restants"
+        elif info == "expire" :
+            message="Votre session a expiré. Veuillez valider à nouveau votre panier"
+        else :
+            message = ""
+
         context = {
         "cart" : query,
         "total" : total_cart,
-        "minimum" : minimum
+        "minimum" : minimum,
+        "message" : message
         }
 
 
@@ -243,7 +252,7 @@ def login_form(request):
 
     return JsonResponse(context)
 
-def profil(request):
+def profil(request, info ='show'):
     before(request)
     client = Client.objects.get(user=request.user)
     if request.method == 'GET':
@@ -268,12 +277,17 @@ def profil(request):
             ref_order = elt.fk_order
             elt.queryset_variety = OrderDetail.objects.filter(fk_order = ref_order)
 
+        if info == 'success':
+            message = "Votre commande a été enregistrée !"
+        else :
+            message = ""
 
         context = {
         "email" :request.user.get_username(),
         "client" : client,
         "actual_order": actual_order,
-        "past_order" : past_order
+        "past_order" : past_order,
+        "message" : message,
         }
 
         return render(request, 'store/profil.html', context)
@@ -380,7 +394,6 @@ def reservation(request):
     if button_cart :
         client = Client.objects.get(user=request.user)
         cart = Cart.objects.filter(fk_client=client)
-        message = ""
 
         try:
             with transaction.atomic():
@@ -392,21 +405,16 @@ def reservation(request):
         except IntegrityError:
             update_cart_values(request, client)
 
-            message = "Votre panier a été modifié en fonction des stocks restants"
-            response = 'confirm'
-            url_cible = reverse('store:cart')
+            url_cible = reverse('store:cart', kwargs={'info':'outofstock'})
         else:
             ClientReadyToCommand.objects.create(
             fk_client = client,
             validation_date = datetime.datetime.now()
             )
-            response = 'command'
             url_cible = reverse('store:command')
 
         context = {
-        'response' : response,
         'url': url_cible,
-        'message': message
         }
 
         return JsonResponse(context)
@@ -454,7 +462,7 @@ def validate_command(request):
 
         if not client_in_list:
             update_cart_values(request, client)
-            cible = reverse("store:cart")
+            cible = reverse("store:cart", kwargs = {"info" : "expire"})
             context = {
             "url" : cible,
             "response" : "expire"
@@ -509,7 +517,7 @@ def validate_command(request):
 
 
                 response = "success"
-                cible = reverse("store:account")
+                cible = reverse("store:account", kwargs={'info':'success'})
                 cart.delete()
                 client_ready.delete()
 
