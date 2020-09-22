@@ -1,0 +1,25 @@
+{%extends "store/base.html"%}
+{% load static %}
+
+{%block content%}
+<section class="mt-5">
+  <div class="container">
+    <div class="row h-100">
+      <div class="col-sm-2 text-center my-auto">
+        <img src="{% static 'store/img/artichaut.png' %}" alt="" class="img-fluid img-thumbnail dessin" id="radis">
+      </div>
+      <div class="offset-sm-1 col-sm-6 my-auto">
+        <div class="presentation">
+          <h4>Perdu ?</h4>
+          <hr>
+          Désolé, mais la page que vous recherchez n'existe pas...
+        </div>
+      </div>
+      <div class="offset-sm-1 col-sm-2 text-center my-auto">
+        <img src="{% static 'store/img/radis.png' %}" alt="" class="img-fluid img-thumbnail dessin" id="radis">
+      </div>
+    </div>
+  </div>
+</section>
+
+{%endblock%}

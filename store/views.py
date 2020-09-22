@@ -572,3 +572,7 @@ def remove_order(request):
 
     else:
         return redirect('store:account')
+
+def notfound(request, exception):
+    """ load 404 page and return status code 404 """
+    return render(request, "store/404.html", status=404)
