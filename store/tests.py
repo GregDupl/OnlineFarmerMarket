@@ -228,6 +228,41 @@ class DeleteUserTestCase(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(initial_number-1, new_number)
 
+class loginTestCase(TestCase):
+    def setUp(self):
+        fake_dataset()
+
+    def test_connect(self):
+        c = C()
+        response = c.post(reverse("store:login"),{
+            'choice':'connect',
+            'email' : 'fake@mail.com',
+            'password' : 'password'
+        })
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_create(self):
+        initial_number = User.objects.count()
+        c = C()
+        response = c.post(reverse("store:login"),{
+            'choice' : 'create',
+            'email' : 'fake_user@mail.com',
+            'password' : 'password',
+            'name' : 'fake_user',
+            'number': 22 ,
+            'street': 'fake_street' ,
+            'cplt' : '',
+            'cp' : '91000',
+            'city': 'Paris',
+            'phone': '' ,
+            'type': 'particulier' ,
+        })
+        new_number = User.objects.count()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(new_number, initial_number+1)
+
+
 class EmailTestCase(TestCase):
     def test_send_email(self):
         User.objects.create(username="admin@farm", email="admin@mail.com", password="password")
