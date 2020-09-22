@@ -10,7 +10,7 @@
           <h4>NOS POINTS DE VENTE</h4>
           <hr>
           {% for elt in places%}
-            <li class="mb-4 ml-4">
+            <li class="mb-4">
             {{elt.fk_collect_location.name|capfirst}}
             <br>
             {{elt.fk_collect_location.fk_adress.numero}}, {{elt.fk_collect_location.fk_adress.rue}},
@@ -40,7 +40,7 @@
           <h4>NOS RELAIS CLICK&COLLECT</h4>
           <hr>
           {% for elt in locker%}
-            <li class="mb-4 ml-4">
+            <li class="mb-4">
               {{elt.name}}
               <br>
               {{elt.fk_adress.numero}}, {{elt.fk_adress.rue}},
@@ -62,7 +62,7 @@
           <h4>LIVRAISONS POUR LES RESTAURATEURS</h4>
           <hr>
           {% for elt in restaurant%}
-          <li class="mb-4 ml-4">
+          <li class="mb-4">
             Le {{elt.fk_day.name}} de {{elt.start_time|date:"H:i"}} à {{elt.end_time|date:"H:i"}}
           </li>
           {%endfor%}
