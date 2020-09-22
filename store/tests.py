@@ -4,21 +4,27 @@ from django.urls import reverse
 from django.test import TestCase, Client as C
 from store.management.commands.create_data import *
 import datetime
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from selenium import webdriver
+from webdriver_manager.firefox import GeckoDriverManager
+from selenium.webdriver.support.ui import Select
+import time
 
 def fake_dataset():
     u = User.objects.create_user(username='fake@mail.com', password='password', first_name='name')
     fake_adress = Adress.objects.create(numero = 1, rue='street', complement='cplt', code_postal=95000, ville='city')
-    type = ClientType.objects.create(type_client="parctiulier")
+    type = ClientType.objects.create(type_client="particulier")
     fake_client = Client.objects.create(
     user = u,
     phone = '',
-    fk_client_type = ClientType.objects.get(type_client="parctiulier"),
+    fk_client_type = ClientType.objects.get(type_client="particulier"),
     fk_adress = fake_adress
     )
     fake_unity = Unity.objects.create(type="fake_type")
     fake_category = Category.objects.create(name="fake_category")
     fake_product = Product.objects.create(name="fake_product", fk_category=fake_category)
-    fake_variety = Variety.objects.create(name="fake_name",price=1,stock=20,fk_unity=fake_unity,fk_product=fake_product)
+    fake_variety = Variety.objects.create(name="fake_name",price=1,stock=20,fk_unity=fake_unity,fk_product=fake_product, image="medias_variety/batavia.jpg")
+    MinimumCommand.objects.create(amount=2)
     return fake_variety, fake_client
 
 # Create your tests here.
@@ -310,3 +316,114 @@ class RemoveOrderTestCase(TestCase):
         self.assertEqual(new_detail, initial_detail-1)
         self.assertEqual(new_historic, initial_historic-1)
         self.assertEqual(new_stock, initial_stock+15)
+
+
+#### FUNCTIONAL TEST
+
+class CustomerJourneyOrderTestCase(StaticLiveServerTestCase):
+    def setUp(self):
+        fake_dataset()
+        fake_type = CommandType.objects.create(type="fake_type")
+        fake_day = Day.objects.create(name="lundi")
+        fake_time = TimeSlot.objects.create(fk_day=fake_day, start_time=datetime.time(8,30,00), end_time=datetime.time(11,30,00), fk_command_type=fake_type)
+        fake_collect = CollectLocation.objects.create(name="fake_name",fk_adress=Adress.objects.get(ville='city'), fk_command_type=fake_type)
+        fake_withdrawal = DirectWithdrawal.objects.create(fk_collect_location=fake_collect, fk_time_slot=fake_time)
+
+        self.driver = webdriver.Firefox(executable_path=GeckoDriverManager().install())
+
+
+    def test_order_process(self):
+        #user add product in his cart and go on cart template
+        self.driver.get(self.live_server_url)
+        self.driver.find_element_by_link_text('Marché en ligne').click()
+        self.driver.find_element_by_name('button').click()
+        self.driver.find_element_by_link_text('Mon panier').click()
+        time.sleep(1)
+        # he adds one more in quantity of his product
+        self.driver.find_element_by_class_name('plus').click()
+        cart_url = self.live_server_url+reverse('store:cart')
+        self.assertEqual(self.driver.current_url, cart_url)
+        self.assertIn("Fake_product", self.driver.page_source)
+
+        time.sleep(2)
+
+        #user log in and click to the command button
+        self.driver.find_element_by_link_text('Login').click()
+        time.sleep(1)
+        self.driver.find_element_by_name('mail').send_keys('fake@mail.com')
+        self.driver.find_element_by_name('password').send_keys('password')
+        self.driver.find_element_by_id('loginbutton').click()
+        time.sleep(1)
+        self.assertIn("Compte", self.driver.page_source)
+
+        time.sleep(2)
+
+        self.driver.find_element_by_class_name('command_button').click()
+        to_order_url = self.live_server_url+reverse('store:command')
+        self.assertEqual(self.driver.current_url, to_order_url)
+
+        # On the order page, customer fills in infos and validate his order
+        self.driver.find_element_by_id('choicecollect').click()
+        select = Select(self.driver.find_element_by_id('choicecollect'))
+        select.select_by_value('withdrawal')
+        self.driver.find_element_by_name('cardName').send_keys('fake')
+        self.driver.find_element_by_name('cardNumber').send_keys('fake')
+        self.driver.find_element_by_name('month').send_keys('fake')
+        self.driver.find_element_by_name('year').send_keys('fake')
+        self.driver.find_element_by_name('ccv').send_keys('fake')
+        self.driver.find_element_by_id('commander').click()
+
+        # customer can see the order on his account page
+        account_url = self.live_server_url+reverse('store:account', kwargs={'info':'success'})
+        self.assertEqual(self.driver.current_url, account_url)
+
+    def tearDown(self):
+        time.sleep(5)
+        self.driver.close()
+
+class CustomerAccountTestCase(StaticLiveServerTestCase):
+
+    def setUp(self):
+        fake_dataset()
+        self.driver = webdriver.Firefox(executable_path=GeckoDriverManager().install())
+
+    def test_create(self):
+        self.driver.get(self.live_server_url)
+        self.driver.find_element_by_link_text('Login').click()
+        self.driver.find_element_by_name('mail').send_keys('user@mail.com')
+        self.driver.find_element_by_id('no_account').click()
+        self.driver.find_element_by_name('name').send_keys('User')
+        self.driver.find_element_by_name('number').send_keys('22')
+        self.driver.find_element_by_name('rue').send_keys('rue magnolia')
+        self.driver.find_element_by_name('code_postal').send_keys('90000')
+        self.driver.find_element_by_name('ville').send_keys('Paris')
+        self.driver.find_element_by_name('password').send_keys('password')
+        self.driver.find_element_by_name('confirmpassword').send_keys('password')
+        self.driver.find_element_by_id('loginbutton').click()
+
+        time.sleep(1)
+        self.assertIn("Compte", self.driver.page_source)
+
+
+    def test_update(self):
+        self.driver.get(self.live_server_url)
+        self.driver.find_element_by_link_text('Login').click()
+        time.sleep(1)
+        self.driver.find_element_by_name('mail').send_keys('fake@mail.com')
+        self.driver.find_element_by_name('password').send_keys('password')
+        self.driver.find_element_by_id('loginbutton').click()
+        time.sleep(1)
+        self.driver.find_element_by_link_text('Compte').click()
+        self.driver.find_element_by_id('update_infos_button').click()
+        name = self.driver.find_element_by_css_selector('#update_infos_form input[name="name"]')
+        name.clear()
+        name.send_keys('New name')
+        self.driver.find_element_by_css_selector('#update_infos_form input[name="password"]').send_keys('password')
+        self.driver.find_element_by_css_selector('#update_infos_form button').click()
+
+        time.sleep(1)
+        self.assertIn("New name", self.driver.page_source)
+
+    def tearDown(self):
+        time.sleep(2)
+        self.driver.close()
