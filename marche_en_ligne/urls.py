@@ -18,6 +18,8 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
 
+admin.site.site_header = 'Aux jardins gourmands - Administration'
+admin.site.index_title = 'Marché en ligne fermier'
 
 urlpatterns = [
     path('', include('store.urls')),
