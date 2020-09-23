@@ -29,12 +29,12 @@ def add_to_cart(request, client, variety, quantity):
 
 def update_cart_values(request, client):
     for obj in Cart.objects.filter(fk_client=client):
-        if obj.quantity > obj.fk_variety.stock:
-            if obj.fk_variety.stock == 0:
-                obj.delete()
-            else:
-                obj.quantity=obj.fk_variety.stock
-                obj.save()
+        if obj.fk_variety.stock == 0 or obj.fk_variety.available == False:
+            obj.delete()
+
+        elif obj.quantity > obj.fk_variety.stock:
+            obj.quantity = obj.fk_variety.stock
+            obj.save()
 
 def before(request):
     if request.user.is_authenticated:
@@ -56,7 +56,7 @@ def index(request):
 def webmarket(request):
     before(request)
 
-    variety = Variety.objects.all()
+    variety = Variety.objects.filter(available=True)
     category = Category.objects.all()
 
     if request.user.is_authenticated:

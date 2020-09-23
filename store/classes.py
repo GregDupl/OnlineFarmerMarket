@@ -29,7 +29,7 @@ class CartSession(CartObject, Variety):
     def update(self,request):
         for obj in self.objects:
             key = str(obj.fk_variety.pk)
-            if obj.fk_variety.stock == 0:
+            if obj.fk_variety.stock == 0 or obj.fk_variety.available == False:
                 self.data.pop(key)
                 self.objects.remove(obj)
 
