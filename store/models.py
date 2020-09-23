@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 
 # Create your models here.
+
+
 class Adress(models.Model):
     numero = models.IntegerField()
     rue = models.CharField(max_length=250)
@@ -11,12 +13,19 @@ class Adress(models.Model):
     ville = models.CharField(max_length=100)
 
     def __str__(self):
-        title= "{} {} {}, {} {}".format(self.numero, self.rue, self.complement, self.code_postal, self.ville)
+        title = "{} {} {}, {} {}".format(
+            self.numero,
+            self.rue,
+            self.complement,
+            self.code_postal,
+            self.ville
+        )
         return title
 
     class Meta:
-        verbose_name = 'Adresse enregistrée'
-        verbose_name_plural = 'Adresses enregistrées'
+        verbose_name = "Adresse enregistrée"
+        verbose_name_plural = "Adresses enregistrées"
+
 
 class CommandType(models.Model):
     type = models.CharField(max_length=50)
@@ -26,9 +35,8 @@ class CommandType(models.Model):
         return self.type
 
     class Meta:
-        verbose_name = 'Type de commande'
-        verbose_name_plural = 'Types de commande'
-
+        verbose_name = "Type de commande"
+        verbose_name_plural = "Types de commande"
 
 
 class ClientType(models.Model):
@@ -39,8 +47,9 @@ class ClientType(models.Model):
         return self.type_client
 
     class Meta:
-        verbose_name = 'Type de clientèle'
-        verbose_name_plural = 'Types de clientèle'
+        verbose_name = "Type de clientèle"
+        verbose_name_plural = "Types de clientèle"
+
 
 class Category(models.Model):
     name = models.CharField(max_length=250)
@@ -49,8 +58,9 @@ class Category(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = 'Catégorie de produit'
-        verbose_name_plural = 'Catégories de produit'
+        verbose_name = "Catégorie de produit"
+        verbose_name_plural = "Catégories de produit"
+
 
 class Unity(models.Model):
     type = models.CharField(max_length=50)
@@ -59,8 +69,8 @@ class Unity(models.Model):
         return self.type
 
     class Meta:
-        verbose_name = 'Unité'
-        verbose_name_plural = 'Unités'
+        verbose_name = "Unité"
+        verbose_name_plural = "Unités"
 
 
 class AdminCode(models.Model):
@@ -70,8 +80,8 @@ class AdminCode(models.Model):
         return str(self.code)
 
     class Meta:
-        verbose_name = 'Admin code lockers'
-        verbose_name_plural = 'admin code lockers'
+        verbose_name = "Admin code lockers"
+        verbose_name_plural = "admin code lockers"
 
 
 class Product(models.Model):
@@ -82,8 +92,9 @@ class Product(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = 'Produit'
-        verbose_name_plural = 'Produits'
+        verbose_name = "Produit"
+        verbose_name_plural = "Produits"
+
 
 class Variety(models.Model):
     name = models.CharField(max_length=250)
@@ -98,8 +109,9 @@ class Variety(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = 'Variété produit'
-        verbose_name_plural = 'Variétés produit'
+        verbose_name = "Variété produit"
+        verbose_name_plural = "Variétés produit"
+
 
 class Day(models.Model):
     name = models.CharField(max_length=50)
@@ -108,44 +120,58 @@ class Day(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = 'Jour'
-        verbose_name_plural = 'Jours'
+        verbose_name = "Jour"
+        verbose_name_plural = "Jours"
 
 
 class TimeSlot(models.Model):
     fk_day = models.ForeignKey(Day, on_delete=models.CASCADE)
     start_time = models.TimeField(auto_now=False, auto_now_add=False)
     end_time = models.TimeField(auto_now=False, auto_now_add=False)
-    fk_command_type = models.ForeignKey(CommandType, on_delete=models.CASCADE,
-    limit_choices_to=Q(type="withdrawal") | Q(type="delivery"))
+    fk_command_type = models.ForeignKey(
+        CommandType,
+        on_delete=models.CASCADE,
+        limit_choices_to=Q(type="withdrawal") | Q(type="delivery"),
+    )
 
     def __str__(self):
         title = "{} de {} à {} - {}".format(
-        self.fk_day, self.start_time, self.end_time, self.fk_command_type)
+            self.fk_day, self.start_time, self.end_time, self.fk_command_type
+        )
         return title
 
     class Meta:
-        verbose_name = 'Plage horaire'
-        verbose_name_plural = 'Plages horaires'
+        verbose_name = "Plage horaire"
+        verbose_name_plural = "Plages horaires"
+
 
 class CollectLocation(models.Model):
     name = models.CharField(max_length=250)
     fk_adress = models.ForeignKey(Adress, on_delete=models.CASCADE)
-    fk_command_type = models.ForeignKey(CommandType, on_delete=models.CASCADE,
-    limit_choices_to=Q(type="withdrawal") | Q(type="locker"))
-    schedule = models.ManyToManyField(TimeSlot, through='DirectWithdrawal')
+    fk_command_type = models.ForeignKey(
+        CommandType,
+        on_delete=models.CASCADE,
+        limit_choices_to=Q(type="withdrawal") | Q(type="locker"),
+    )
+    schedule = models.ManyToManyField(TimeSlot, through="DirectWithdrawal")
 
     def __str__(self):
-        title = "{} - {} - {}".format(self.name, self.fk_adress, self.fk_command_type)
+        title = "{} - {} - {}".format(
+            self.name,
+            self.fk_adress,
+            self.fk_command_type
+        )
         return title
 
     class Meta:
-        constraints= [
-        models.UniqueConstraint(fields=['fk_adress','fk_command_type'],
-        name='unicque_collect_location')
+        constraints = [
+            models.UniqueConstraint(
+                fields=["fk_adress", "fk_command_type"],
+                name="unicque_collect_location"
+            )
         ]
-        verbose_name = 'lieu de collecte'
-        verbose_name_plural = 'Lieux de collecte'
+        verbose_name = "lieu de collecte"
+        verbose_name_plural = "Lieux de collecte"
 
 
 class Locker(models.Model):
@@ -153,8 +179,9 @@ class Locker(models.Model):
     disponibility = models.BooleanField(default=True)
     secret_code = models.IntegerField()
     fk_collect_location = models.ForeignKey(
-    CollectLocation, on_delete=models.CASCADE,
-    limit_choices_to={"fk_command_type":2}
+        CollectLocation,
+        on_delete=models.CASCADE,
+        limit_choices_to={"fk_command_type": 2},
     )
     fk_admin_code = models.ForeignKey(AdminCode, on_delete=models.CASCADE)
 
@@ -163,17 +190,21 @@ class Locker(models.Model):
         return title
 
     class Meta:
-        constraints= [
-        models.UniqueConstraint(fields=['number','fk_collect_location'],
-        name='unicque_locker_location')
+        constraints = [
+            models.UniqueConstraint(
+                fields=["number", "fk_collect_location"],
+                name="unicque_locker_location"
+            )
         ]
-        verbose_name = 'Casier click&collect'
-        verbose_name_plural = 'Casiers click&collect'
+        verbose_name = "Casier click&collect"
+        verbose_name_plural = "Casiers click&collect"
 
 
 class DeliverySlots(models.Model):
-    fk_time_slot = models.ForeignKey(TimeSlot, on_delete=models.CASCADE,
-    limit_choices_to={"fk_command_type":3}
+    fk_time_slot = models.ForeignKey(
+        TimeSlot,
+        on_delete=models.CASCADE,
+        limit_choices_to={"fk_command_type": 3}
     )
     max_command = models.PositiveIntegerField()
     delivery_area = models.CharField(max_length=250)
@@ -185,45 +216,59 @@ class DeliverySlots(models.Model):
 
 class Delivery(models.Model):
     instruction = models.TextField()
-    fk_delivery_slot = models.ForeignKey(DeliverySlots, on_delete=models.CASCADE, default=None)
+    fk_delivery_slot = models.ForeignKey(
+        DeliverySlots, on_delete=models.CASCADE, default=None
+    )
 
     class Meta:
-        verbose_name = 'Livraison'
-        verbose_name_plural = 'Livraisons'
+        verbose_name = "Livraison"
+        verbose_name_plural = "Livraisons"
 
 
 class DirectWithdrawal(models.Model):
-    fk_collect_location = models.ForeignKey(CollectLocation, on_delete=models.CASCADE,
-    limit_choices_to={"fk_command_type":1})
-    fk_time_slot = models.ForeignKey(TimeSlot, on_delete=models.CASCADE,
-    limit_choices_to={"fk_command_type":1})
+    fk_collect_location = models.ForeignKey(
+        CollectLocation,
+        on_delete=models.CASCADE,
+        limit_choices_to={"fk_command_type": 1},
+    )
+    fk_time_slot = models.ForeignKey(
+        TimeSlot,
+        on_delete=models.CASCADE,
+        limit_choices_to={"fk_command_type": 1}
+    )
     max_command = models.PositiveIntegerField(default=50)
 
     def __str__(self):
         return str(self.fk_collect_location.name)
 
     class Meta:
-        constraints= [
-        models.UniqueConstraint(fields=['fk_collect_location','fk_time_slot'],
-        name='unique_direct_withdrawal')
+        constraints = [
+            models.UniqueConstraint(
+                fields=["fk_collect_location", "fk_time_slot"],
+                name="unique_direct_withdrawal",
+            )
         ]
-        verbose_name = 'Emplacement de retrait en direct'
-        verbose_name_plural = 'Emplacements de retrait en direct'
+        verbose_name = "Emplacement de retrait en direct"
+        verbose_name_plural = "Emplacements de retrait en direct"
 
 
 class Client(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        primary_key=True
+    )
     phone = models.CharField(max_length=256, blank=True, null=True)
     fk_client_type = models.ForeignKey(ClientType, on_delete=models.CASCADE)
     fk_adress = models.ForeignKey(Adress, on_delete=models.CASCADE)
-    variety = models.ManyToManyField(Variety, through='Cart')
+    variety = models.ManyToManyField(Variety, through="Cart")
 
     def __str__(self):
         return str(self.user.first_name)
 
     class Meta:
-        verbose_name = 'Client'
-        verbose_name_plural = 'Clients'
+        verbose_name = "Client"
+        verbose_name_plural = "Clients"
 
 
 class Cart(models.Model):
@@ -232,27 +277,35 @@ class Cart(models.Model):
     quantity = models.IntegerField()
 
     class Meta:
-        constraints= [
-        models.UniqueConstraint(fields=['fk_client','fk_variety'],
-        name='unique_product_cart')
+        constraints = [
+            models.UniqueConstraint(
+                fields=["fk_client", "fk_variety"], name="unique_product_cart"
+            )
         ]
-        verbose_name = 'Panier'
-        verbose_name_plural = 'Paniers'
+        verbose_name = "Panier"
+        verbose_name_plural = "Paniers"
 
 
 class Order(models.Model):
     fk_client = models.ForeignKey(Client, on_delete=models.CASCADE)
-    fk_locker = models.OneToOneField(Locker, on_delete=models.CASCADE, blank=True, null=True)
-    fk_direct_withdrawal = models.ForeignKey(DirectWithdrawal, on_delete=models.CASCADE, blank=True, null=True)
-    fk_delivery = models.OneToOneField(Delivery, on_delete=models.CASCADE, blank=True, null=True)
-    variety = models.ManyToManyField(Variety, through='OrderDetail')
+    fk_locker = models.OneToOneField(
+        Locker, on_delete=models.CASCADE, blank=True, null=True
+    )
+    fk_direct_withdrawal = models.ForeignKey(
+        DirectWithdrawal, on_delete=models.CASCADE, blank=True, null=True
+    )
+    fk_delivery = models.OneToOneField(
+        Delivery, on_delete=models.CASCADE, blank=True, null=True
+    )
+    variety = models.ManyToManyField(Variety, through="OrderDetail")
 
     def __str__(self):
         return str("{} - {}".format(self.fk_client, self.pk))
 
     class Meta:
-        verbose_name = 'Commande'
-        verbose_name_plural = 'Commandes'
+        verbose_name = "Commande"
+        verbose_name_plural = "Commandes"
+
 
 class OrderHistoric(models.Model):
     fk_order = models.OneToOneField(Order, on_delete=models.CASCADE)
@@ -261,11 +314,14 @@ class OrderHistoric(models.Model):
     date_cancellation = models.DateField(blank=True, null=True)
 
     def __str__(self):
-        return str("{} - {}".format(self.fk_order.fk_client, self.date_creation))
+        return str("{} - {}".format(
+            self.fk_order.fk_client,
+            self.date_creation
+        ))
 
     class Meta:
-        verbose_name = 'Historique de commandes'
-        verbose_name_plural = 'Historique de commandes'
+        verbose_name = "Historique de commandes"
+        verbose_name_plural = "Historique de commandes"
 
 
 class OrderDetail(models.Model):
@@ -277,13 +333,13 @@ class OrderDetail(models.Model):
         return str(self.fk_order)
 
     class Meta:
-        constraints= [
-        models.UniqueConstraint(fields=['fk_order','fk_variety'],
-        name='unique_product_order')
+        constraints = [
+            models.UniqueConstraint(
+                fields=["fk_order", "fk_variety"], name="unique_product_order"
+            )
         ]
-        verbose_name = 'Détail de commande'
-        verbose_name_plural = 'Détails de commande'
-
+        verbose_name = "Détail de commande"
+        verbose_name_plural = "Détails de commande"
 
 
 class ClientReadyToCommand(models.Model):
@@ -295,8 +351,9 @@ class ClientReadyToCommand(models.Model):
         return str(self.fk_client)
 
     class Meta:
-        verbose_name = 'Client prêt à commander'
-        verbose_name_plural = 'Clients prêts à commander'
+        verbose_name = "Client prêt à commander"
+        verbose_name_plural = "Clients prêts à commander"
+
 
 class MinimumCommand(models.Model):
     amount = models.PositiveIntegerField()
@@ -305,8 +362,9 @@ class MinimumCommand(models.Model):
         return str(self.amount)
 
     class Meta:
-        verbose_name = 'Minimum de commande'
-        verbose_name_plural = 'Minimum de commande'
+        verbose_name = "Minimum de commande"
+        verbose_name_plural = "Minimum de commande"
+
 
 class MessageToClient(models.Model):
     message = models.TextField()
@@ -315,5 +373,5 @@ class MessageToClient(models.Model):
         return str(self.message)
 
     class Meta:
-        verbose_name = 'Message au clients'
-        verbose_name_plural = 'Message aux clients'
+        verbose_name = "Message au clients"
+        verbose_name_plural = "Message aux clients"

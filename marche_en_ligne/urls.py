@@ -22,7 +22,7 @@ from django.conf import settings
 admin.site.site_header = 'Aux jardins gourmands - Administration'
 admin.site.index_title = 'Marché en ligne fermier'
 
-handler404='store.views.notfound'
+handler404 = 'store.views.notfound'
 
 urlpatterns = [
     path('', include('store.urls')),

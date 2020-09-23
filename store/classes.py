@@ -1,8 +1,9 @@
 from store.models import *
 from django.db.models import F
 
-class CartObject():
-    """Create a cart object with variety and quantity attributes """
+
+class CartObject:
+    """Create a product's cart object with variety and quantity attributes """
 
     def __init__(self, variety, quantity):
         self.fk_variety = variety
@@ -10,7 +11,10 @@ class CartObject():
 
 
 class CartSession(CartObject, Variety):
-    """To create an object with methods based on request.session['cart']"""
+    """To create an cart object with request.session['cart'] of
+    the anonymous user. The object can call several methods to create a list
+    of cart item object in the manner of a queryset
+    """
 
     def __init__(self, dict):
         self.data = dict
@@ -20,16 +24,16 @@ class CartSession(CartObject, Variety):
         for key, value in self.data.items():
             fk_variety = Variety.objects.get(pk=key)
             quantity = value
-            cart_item = CartObject(fk_variety,quantity)
+            cart_item = CartObject(fk_variety, quantity)
             self.objects.append(cart_item)
 
     def return_queryset(self, request):
-            return self.objects
+        return self.objects
 
-    def update(self,request):
+    def update(self, request):
         for obj in self.objects:
             key = str(obj.fk_variety.pk)
-            if obj.fk_variety.stock == 0 or obj.fk_variety.available == False:
+            if obj.fk_variety.stock == 0 or obj.fk_variety.available is False:
                 self.data.pop(key)
                 self.objects.remove(obj)
 
@@ -43,14 +47,18 @@ class CartSession(CartObject, Variety):
         for object in self.objects:
             variety = object.fk_variety
             quantity = object.quantity
-            add(request,client,variety,quantity)
+            add(request, client, variety, quantity)
 
 
-class UserCart():
+class UserCart:
+    '''Create an object with queryset of client and cart from database.
+    An object can call two methods, to calcul a total and to unsave
+    product of the cart's client in the database
+    '''
+
     def __init__(self, client):
         self.client = client
         self.cart_queryset = Cart.objects.filter(fk_client=self.client)
-
 
     def total(self):
         total_cart = 0
@@ -60,7 +68,7 @@ class UserCart():
         return total_cart, self.cart_queryset
 
     def unsave(self):
-        for obj in self.cart_queryset :
+        for obj in self.cart_queryset:
             variety = obj.fk_variety
-            variety.stock = F('stock') + obj.quantity
+            variety.stock = F("stock") + obj.quantity
             variety.save()
