@@ -159,7 +159,7 @@ class Locker(models.Model):
     fk_admin_code = models.ForeignKey(AdminCode, on_delete=models.CASCADE)
 
     def __str__(self):
-        title = "{} - {}".format(self.number, self.fk_collect_location)
+        title = "{} - {}".format(self.number, self.fk_collect_location.name)
         return title
 
     class Meta:
@@ -200,7 +200,7 @@ class DirectWithdrawal(models.Model):
     max_command = models.PositiveIntegerField(default=50)
 
     def __str__(self):
-        return str(self.fk_collect_location)
+        return str(self.fk_collect_location.name)
 
     class Meta:
         constraints= [
@@ -263,6 +263,10 @@ class OrderHistoric(models.Model):
     def __str__(self):
         return str("{} - {}".format(self.fk_order.fk_client, self.date_creation))
 
+    class Meta:
+        verbose_name = 'Historique de commandes'
+        verbose_name_plural = 'Historique de commandes'
+
 
 class OrderDetail(models.Model):
     fk_order = models.ForeignKey(Order, on_delete=models.CASCADE)
@@ -290,14 +294,26 @@ class ClientReadyToCommand(models.Model):
     def __str__(self):
         return str(self.fk_client)
 
+    class Meta:
+        verbose_name = 'Client prêt à commander'
+        verbose_name_plural = 'Clients prêts à commander'
+
 class MinimumCommand(models.Model):
     amount = models.PositiveIntegerField()
 
     def __str__(self):
         return str(self.amount)
 
+    class Meta:
+        verbose_name = 'Minimum de commande'
+        verbose_name_plural = 'Minimum de commande'
+
 class MessageToClient(models.Model):
     message = models.TextField()
 
     def __str__(self):
         return str(self.message)
+
+    class Meta:
+        verbose_name = 'Message au clients'
+        verbose_name_plural = 'Message aux clients'
