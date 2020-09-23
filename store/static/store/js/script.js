@@ -14,7 +14,7 @@ $(".filtres").on('click', function (event){
 });
 
 
-// MODAL
+// On showing modal, get all data product and display them in the modal content
 $('#detailProduct').on('show.bs.modal', function (event) {
   var product = $(event.relatedTarget)
   var modal = $(this)
@@ -47,21 +47,7 @@ $('#detailProduct').on('show.bs.modal', function (event) {
     input.parent("div").css("display","none")
     modal.find('.add').css("display","block")
   }
-
-  //var vids = $(".videorecette");
-  //for (var i = 0; i < vids.length; i++) {
-//    vids[i].load()
-  //}
-
-//  var active = $(this).find(".active video");
-//  active[0].play()
 });
-
-$("#carouselExampleCaptions").on('slid.bs.carousel', function () {
-   var vids = $(this).find(".active video");
-   vids[0].currentTime = 0;
-   vids[0].play()
-})
 
 
 //LOGIN FORM
@@ -105,7 +91,7 @@ $("#loginform input[name='clienttype']").click(function(){
   }
 })
 
-
+// AJAX request to connect user or create an account
 const login = () => {
   $.ajax({
     type:"POST",
@@ -132,7 +118,7 @@ const login = () => {
   });
 };
 
-
+// event on submitting form to login user or create an account
 $("#loginform").submit(function(event){
   event.preventDefault();
   if (($('#have_account').is(':checked'))) {
@@ -169,6 +155,8 @@ $("#loginform").submit(function(event){
 
 
 // ****** CART INTERFACE ******
+
+// Calcul total for the user cart
 function update_total_cart() {
   var total_result=0;
   var subtotal = $(".subtotal");
@@ -187,6 +175,7 @@ function update_total_cart() {
 
 };
 
+// Calcul subtotals for the user cart
 function update_cart(origin, value){
   subtotal = origin.parents("tr").find(".subtotal");
   price = origin.parents("tr").attr("data-price");
@@ -195,6 +184,7 @@ function update_cart(origin, value){
   update_total_cart()
 };
 
+// update text in buttons cart depending of the input value
 function update_button(value, max, minus, plus){
   if (value == 1)
   {
@@ -219,6 +209,7 @@ function update_button(value, max, minus, plus){
   }
 };
 
+// AJAX request to update product quantity in the cart's user
 function ajax_update(input, id_product, value, action){
   $.ajax({
     type:"POST",
@@ -265,6 +256,7 @@ function ajax_update(input, id_product, value, action){
   });
 };
 
+//AJAX request to remove a product from the cat's user
 function ajax_remove(input, id_product, action){
   $.ajax({
     type:"POST",
@@ -303,6 +295,7 @@ function ajax_remove(input, id_product, action){
   });
 }
 
+// AJAX request to add a product in the cart's user
 $(".add").click(function(event){
   add_button = $(event.target)
   cart_elt = add_button.parent('.cart_interface')
@@ -340,6 +333,7 @@ $(".add").click(function(event){
   });
 });
 
+// Event click on button plus or minus to change quantity in cart's user
 $(".changebutton").click(function(event){
   modify_button = $(event.target)
   cart_elt = modify_button.parents(':eq(1)')
@@ -366,6 +360,8 @@ $(".changebutton").click(function(event){
   }
 });
 
+// event when value of the input cart iterface change
+// by the user whitout using buttons
 $(".quantity").change(function(event){
   input = $(event.target);
   user_entry = parseInt(input.val());
@@ -385,6 +381,7 @@ $(".quantity").change(function(event){
 
 });
 
+// event when the user unfocus input cart interface
 $(".quantity").focusout(function(e){
   input = $(event.target)
   cart_elt = input.parents(':eq(1)')
@@ -395,6 +392,8 @@ $(".quantity").focusout(function(e){
 
 
 // ****** UPDATE PROFIL ******
+
+// AJAX request to update profil informations of the authenticated user
 function update_profil(form, data){
   $.ajax({
     type:"POST",
@@ -415,6 +414,7 @@ function update_profil(form, data){
   });
 };
 
+// Event to show form to update infos
 $("#update_infos_button").click(function(event){
   $("#update_message").text("");
   var text = $(this).text();
@@ -433,6 +433,7 @@ $("#update_infos_button").click(function(event){
   }
 });
 
+// event to show form to update password
 $("#update_password_button").click(function(event){
   var text = $(this).text();
   $("#update_message").text("");
@@ -451,6 +452,7 @@ $("#update_password_button").click(function(event){
   }
 });
 
+// event on submitting form to update infos user
 $("#update_infos_form").submit(function(event) {
   event.preventDefault();
   var form = $("#update_infos_form")
@@ -469,6 +471,7 @@ $("#update_infos_form").submit(function(event) {
   update_profil(form, newinfo)
 });
 
+// Event on submitting form to update password
 $("#update_password_form").submit(function(event){
   event.preventDefault();
   var newpass = $("#update_password_form input[name='newpassword']").val();
@@ -487,12 +490,13 @@ $("#update_password_form").submit(function(event){
   }
 });
 
-
+// show alert if user click on delete account button
 $("#deletebutton").click(function(event){
   $(this).hide();
   $("#alertdelete").show();
 });
 
+// hide alert if user choose to not delete his account
 $("#abandon").click(function(event){
   $("#deletebutton").show();
   $("#alertdelete").hide();
@@ -533,6 +537,7 @@ $("#contactform").submit(function(event){
 
 
 // ****** RESERVATION CART BUTTON ******
+// AJAX request to reserve cart items
 $("#command").click(function(){
   $(this).text("verification en cours...")
   $(this).prop("disabled",true)
@@ -553,6 +558,8 @@ $("#command").click(function(){
 
 
 // ****** CHOICE OPTIONS COMMANDE ******
+
+// display options depending of choices made by the user
 $("#choicecollect").click(function(){
   choice = $( "#choicecollect option:selected").attr("value");
   $(".optioncollect").each(function(){
@@ -565,6 +572,7 @@ $("#choicecollect").click(function(){
 });
 
 // ****** BUTTON ORDER ******
+// AJAX request on submitting form to order items in cart
 $("#formvalidation").submit(function(event) {
     event.preventDefault();
     $.ajax({
@@ -596,6 +604,7 @@ $("#formvalidation").submit(function(event) {
 
 
 // ****** REMOVE ORDER ******
+// AJAX request to remove a command made by the user
 $(".remove_order").click(function(event){
   button = $(event.target);
   order = button.attr("data-id");

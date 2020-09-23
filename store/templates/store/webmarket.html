@@ -96,10 +96,8 @@
               <div class="col-md-12">
                 <div class="row">
                   <p class="price my-2 col-12">prix / unité</p>
-
                 </div>
-
-                <div class="cart_interface" data-id='id'>
+                <div class="cart_interface col-12" data-id='id'>
                   <div class="row modif" style="display:none" data-url="{%url 'store:cart'%}">
                     <button class="col-3 btn btn-info my-2 changebutton minus"> - </button>
                     <input class="col-3 quantity" type="text" inputmode="numeric" value="1" min="1">
@@ -107,61 +105,14 @@
                   </div>
                   <button type="submit" class="btn btn-info my-2 add" data-url="{%url 'store:adding_cart'%}" name="button">+</button>
                 </div>
-
               </div>
-
             </div>
           </div>
         </div>
-
-        <div class="row">
-          <div class="col-md-12">
-            <hr>
-            <h5 class="my-4">Idée recette : gaspacho </h5>
-            <div id="carouselExampleCaptions" class="carousel slide" data-interval="false"">
-              <ol class="carousel-indicators">
-                <li data-target="#carouselExampleCaptions" data-slide-to="0" class="active"></li>
-                <li data-target="#carouselExampleCaptions" data-slide-to="1"></li>
-              </ol>
-              <div class="carousel-inner">
-
-                <div class="carousel-item active">
-                  <video class="d-block w-100 videorecette" preload="none" playsinline="playsinline" src="{%static 'store/img/recettes/step01.mp4'%}" muted loop>
-                  </video>
-
-                  <div class="carousel-caption d-none d-md-block">
-                    <h5>Couper en tranche</h5>
-                    <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
-                  </div>
-                </div>
-
-                <div class="carousel-item">
-                  <video class="d-block w-100 videorecette" preload="none" playsinline="playsinline"
-                  src="{%static 'store/img/recettes/step02.mp4'%}" muted loop">
-                  </video>
-
-                  <div class="carousel-caption d-none d-md-block">
-                    <h5>Second slide label</h5>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                  </div>
-                </div>
-
-
-              <a class="carousel-control-prev" href="#carouselExampleCaptions" role="button" data-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="sr-only">Previous</span>
-              </a>
-              <a class="carousel-control-next" href="#carouselExampleCaptions" role="button" data-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="sr-only">Next</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 </div>
-
+</div>
+</div>
 </section>
 {%endblock%}
