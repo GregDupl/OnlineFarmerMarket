@@ -96,7 +96,7 @@ def webmarket(request):
 
     before(request)
 
-    variety = Variety.objects.filter(available=True)
+    variety = Variety.objects.filter(available=True).order_by('fk_product')
     category = Category.objects.all()
 
     if request.user.is_authenticated:
@@ -337,7 +337,7 @@ def profil(request, info="show"):
             fk_order__in=order,
             date_end__isnull=True,
             date_cancellation__isnull=True
-        )
+        ).order_by("-fk_order")
 
         for elt in actual_order:
             ref_order = elt.fk_order
@@ -349,7 +349,7 @@ def profil(request, info="show"):
             fk_order__in=order,
             date_end__isnull=False,
             date_cancellation__isnull=True
-        )
+        ).order_by("-fk_order")
 
         for elt in past_order:
             ref_order = elt.fk_order
