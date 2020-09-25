@@ -689,6 +689,15 @@ def remove_order(request):
                 variety.stock = F("stock") + obj.quantity
                 variety.save()
 
+            if order.fk_delivery is not None:
+                ref_delivery = order.fk_delivery
+                ref_delivery.delete()
+
+            elif order.fk_locker is not None:
+                ref_locker = order.fk_locker
+                ref_locker.disponibility = True
+                ref_locker.save()
+
             order.delete()
 
             response = "Commande supprimée"
