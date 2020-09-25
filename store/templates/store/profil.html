@@ -38,7 +38,7 @@
                           {%elif order.fk_order.fk_locker%}
                           En click&collect - {{order.fk_order.fk_locker.fk_collect_location.name}}  - casier n° {{order.fk_order.fk_locker.number}}
                           {%else%}
-                          Livraison - {{order.fk_order.fk_delivery.fk_delivery_slot.fk_day.name}}
+                          Livraison - {{order.fk_order.fk_delivery.fk_delivery_slot.fk_time_slot.fk_day.name}}
                           {%endif%}
                         </div>
                         {%for elt in order.queryset_variety%}
