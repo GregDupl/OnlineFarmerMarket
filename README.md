@@ -25,12 +25,12 @@ To download app project :
 - install requirements for this app with the command : pip install -r OnlineFarmerMarket/requirements.txt
 
 
-- In OnlineFarmerMarket/marche_en_ligne/settings/__ init __.py, you 'll have to change 'NAME' and 'USER' in 'DATABASES' configuration :
+- In OnlineFarmerMarket/marche_en_ligne/settings/__ init __ .py, you 'll have to change 'NAME' and 'USER' in 'DATABASES' configuration :
   - 'NAME': 'name of your created database',
   - 'USER': 'name of the user in postgreSQL',
 
 - Now, make sure you're in OnlineFarmerMarket directory in your console and type :
-  - ' ./manage.py migrate '
-  - ' ./manage.py loaddata store/dumps/db.json ' to load initial dataset into your database
+  - ' __./manage.py migrate__ '
+  - ' __./manage.py loaddata store/dumps/db.json__ ' to load initial dataset into your database
   
   - You can run the app in development mode with ' ./manage.py runserver '
