@@ -97,6 +97,14 @@ class OrderHistoricAdmin(admin.ModelAdmin):
     )
 
 
+class DeliveryAdmin(admin.ModelAdmin):
+    list_display = ("ref_client", "instruction", "fk_delivery_slot")
+
+    def ref_client(self, obj):
+        name_client = Order.objects.get(fk_delivery=obj).fk_client.user.username
+        return name_client
+
+
 admin.site.register(Adress, AdressAdmin)
 admin.site.register(Variety, VarietyAdmin)
 admin.site.register(Product, ProductAdmin)
@@ -118,3 +126,4 @@ admin.site.register(ClientReadyToCommand)
 admin.site.register(OrderDetail, OrderDetailAdmin)
 admin.site.register(OrderHistoric, OrderHistoricAdmin)
 admin.site.register(DeliverySlots)
+admin.site.register(Delivery, DeliveryAdmin)
