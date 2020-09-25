@@ -623,8 +623,10 @@ def validate_command(request):
                     )
                 else:
                     instructions = request.POST["instructions"]
+                    option = request.POST["option_delivery"]
                     delivery = Delivery.objects.create(
-                        instructions=instructions, fk_delivery_slot=choice
+                        instruction=instructions,
+                        fk_delivery_slot=DeliverySlots.objects.get(pk=option)
                     )
 
                     order = Order.objects.create(
