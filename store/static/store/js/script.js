@@ -560,7 +560,7 @@ $("#command").click(function(){
 // ****** CHOICE OPTIONS COMMANDE ******
 
 // display options depending of choices made by the user
-$("#choicecollect").click(function(){
+$("#choicecollect").change(function(){
   choice = $( "#choicecollect option:selected").attr("value");
   $(".optioncollect").each(function(){
     if ($(this).attr("id") == choice) {
