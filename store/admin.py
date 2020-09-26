@@ -101,7 +101,9 @@ class DeliveryAdmin(admin.ModelAdmin):
     list_display = ("ref_client", "instruction", "fk_delivery_slot")
 
     def ref_client(self, obj):
-        name_client = Order.objects.get(fk_delivery=obj).fk_client.user.username
+        name_client = Order.objects.get(
+            fk_delivery=obj
+        ).fk_client.user.username
         return name_client
 
 

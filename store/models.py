@@ -213,6 +213,10 @@ class DeliverySlots(models.Model):
         title = "{} - {}".format(self.fk_time_slot, self.delivery_area)
         return title
 
+    class Meta:
+        verbose_name = "Créneau de livraisons"
+        verbose_name_plural = "Créneaux de livraisons"
+
 
 class Delivery(models.Model):
     instruction = models.TextField()
