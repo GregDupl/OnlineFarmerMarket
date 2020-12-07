@@ -6,7 +6,7 @@
   <div class="container">
     <div class="row h-100">
 
-      <div class="offset-md-1 col-md-2 col-sm-3 my-3">
+      <div class="col-md-3 col-sm-3 my-3">
         <h5 class="text-uppercase">Marché en Ligne</h5>
         <hr>
         {%for elt in filter%}
@@ -23,8 +23,8 @@
           {%for elt in catalog%}
 
             {%if elt.available %}
-              <div class="col-md-4 my-3 product" data-category="{{elt.fk_product.fk_category.name}}">
-                <div class="">
+              <div class="col-6 col-md-4 my-3 product" data-category="{{elt.fk_product.fk_category.name}}">
+                <div class="catalog_elt">
                   <div class="row img_product"
                   {%if elt.stock%}
                   data-toggle="modal"
@@ -52,9 +52,13 @@
                   <div class="row infosproduct">
                     <div class="col-lg-12">
 
-                    <h5 class="mt-2 pl-2">{{elt.fk_product.name|capfirst}} <br>{{elt.name|capfirst}}</h5>
-                    <p class="mt-3 pl-2">{{elt.price}}€ / {{elt.fk_unity.type}}</p>
-                    <div class="mb-3">
+                    <h5 class="mt-2 pl-3">
+                      <span style="font-size:0.9em">{{elt.fk_product.name|capfirst}}</span>
+                      <br>
+                      <span class="varietyName">{{elt.name|capfirst}}</span>
+                    </h5>
+                    <p class="mt-3 pl-3">{{elt.price}}€ / {{elt.fk_unity.type}}</p>
+                    <div class="mb-3 pl-3">
                     {% with id=elt.id quantity=elt.quantity stock=elt.stock %}
                       {%include 'store/cartbutton.html'%}
                     {%endwith%}

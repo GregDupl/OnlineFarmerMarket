@@ -16,7 +16,6 @@
 body{
   background-color: #F5F5F5;
   font-family: "josefinRegular";
-  padding-top: 1em;
 }
 
 header {
@@ -65,7 +64,12 @@ header .overlay {
 }
 
 .navbar{
-  background-color: rgba(38,38,38,1);
+  background-color: #263238;
+  box-shadow: 0 1px 1px rgba(38,50,56,0.11),
+              0 2px 2px rgba(38,50,56,0.11),
+              0 4px 4px rgba(38,50,56,0.11),
+              0 6px 8px rgba(38,50,56,0.11),
+              0 8px 16px rgba(38,50,56,0.11);
 }
 
 .navbar a{
@@ -105,7 +109,7 @@ ul{
 
 h4{
   font-family: "josefinLight";
-  color: rgba(38,38,38,0.8);
+  color: #263238;
 }
 
 section{
@@ -123,13 +127,18 @@ section{
   height: auto;
   background-color: inherit;
   border: inherit;
-  opacity:0.3;
+  opacity:0.5;
 }
 
 
 footer{
-  background-color: rgba(38,38,38,1);
+  background-color: #263238;
   color:white;
+  box-shadow: 0 -1px 1px rgba(38,50,56,0.11),
+              0 -2px 2px rgba(38,50,56,0.11),
+              0 -4px 4px rgba(38,50,56,0.11),
+              0 -6px 8px rgba(38,50,56,0.11),
+              0 -8px 16px rgba(38,50,56,0.11);
 }
 
 
@@ -174,23 +183,25 @@ h5{
 
 .out_of_stock{
   position: absolute;
-  top:1em;
-  left: 1em;
+  top: 0.5em;
+  right: 1em;
+  width: 60%;
   color: white;
   background-color: rgba(38,38,38,1);
   opacity: 1;
   font-size: 1em;
   font-family: "josefinLight";
+  text-align: center;
 }
 
 #modalbodylogin{
   padding: 0px;
 }
 #actionchoice{
-  background-color: #c8e6c9;
+  background-color: #eeeeee;
 }
 #create_account, #confirmpass{
-  background-color: #e8f5e9;
+  background-color: #f5f5f5;
 }
 
 .changebutton, .add{
@@ -198,7 +209,8 @@ h5{
   width:2em;
   height: 2em;
   padding : 0em;
-  font-size: 0.8em;
+  font-size: 0.9em;
+  border-radius: 100%;
 }
 .minus{
   opacity: 0.7;
@@ -271,4 +283,28 @@ footer a:hover{
 
 .card-body{
   background-color: rgba(250,250,250,0.3);
+}
+
+.varietyName{
+  font-size:x-large;
+  color : #263238;
+}
+
+.modal-header{
+  background-color: #263238;
+  color:white;
+}
+
+.modal-header span{
+  color: white;
+}
+
+.catalog_elt{
+  background-color: white;
+  border-radius: 3%;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.cart_list{
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
 }
