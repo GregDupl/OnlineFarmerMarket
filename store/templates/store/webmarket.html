@@ -8,12 +8,18 @@
 
       <div class="col-md-3 col-sm-3 my-3">
         <h5 class="text-uppercase">Marché en Ligne</h5>
+
+        <ul class="mt-5">
+          <a href="#" id="all" class="text-muted filtres"> Tout nos produits </a>
+        </ul>
         <hr>
+
         {%for elt in filter%}
         <ul class="">
           <a href="#" id="{{elt.name}}" class="text-muted filtres">{{elt.name}}</a>
         </ul>
         {%endfor%}
+
       </div>
 
 
@@ -24,7 +30,7 @@
 
             {%if elt.available %}
               <div class="col-6 col-md-4 my-3 product" data-category="{{elt.fk_product.fk_category.name}}">
-                <div class="catalog_elt">
+                <div class="catalog_elt {% if not elt.stock %} catalog_out_stock {%endif%}">
                   <div class="row img_product"
                   {%if elt.stock%}
                   data-toggle="modal"
@@ -42,10 +48,7 @@
                   {%endif%}
                   >
                   <div class="col-12">
-                    <img src="{{elt.image.url}}" alt="" class="img-fluid mb-2 border rounded">
-                  {%if elt.stock == 0%}
-                    <p class="out_of_stock py-2 px-2"> RUPTURE DE STOCK</p>
-                  {%endif%}
+                    <img src="{{elt.image.url}}" alt="" class="img-fluid mb-2 border rounded {% if not elt.stock %} img_out_stock {% endif %}">
                   </div>
 
                   </div>
@@ -57,8 +60,14 @@
                       <br>
                       <span class="varietyName">{{elt.name|capfirst}}</span>
                     </h5>
+
+                    {% if elt.stock%}
                     <p class="mt-3 pl-3">{{elt.price}}€ / {{elt.fk_unity.type}}</p>
-                    <div class="mb-3 pl-3">
+                    {%else%}
+                    <p class="mt-3 pl-3"> Rupture de stock </p>
+                    {%endif%}
+
+                    <div class="mb-3 pl-3 {%if not elt.stock%} button_out_stock {%endif%}">
                     {% with id=elt.id quantity=elt.quantity stock=elt.stock %}
                       {%include 'store/cartbutton.html'%}
                     {%endwith%}

@@ -13,6 +13,11 @@ $(".filtres").on('click', function (event){
   }
 });
 
+$("#all").on('click', function(event){
+  var product = $(".product")
+  $(product).show()
+});
+
 
 // On showing modal, get all data product and display them in the modal content
 $('#detailProduct').on('show.bs.modal', function (event) {
