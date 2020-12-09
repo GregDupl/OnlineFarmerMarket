@@ -15,7 +15,9 @@ $(".filtres").on('click', function (event){
 
 $("#all").on('click', function(event){
   var product = $(".product")
-  $(product).show()
+  for (var i = 0; i < product.length; i++) {
+    $(product[i]).show()
+  }
 });
 
 
